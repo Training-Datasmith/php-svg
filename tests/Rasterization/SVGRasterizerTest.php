@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Tests\Rasterization;
 
 use AssertGD\GDSimilarityConstraint;
-use PHPUnit\Framework\TestCase;
 use Exception;
+use PHPUnit\Framework\TestCase;
 use SVG\Nodes\SVGNode;
 use SVG\Rasterization\SVGRasterizer;
 
@@ -97,7 +99,6 @@ class SVGRasterizerTest extends TestCase
         $this->assertEqualsWithDelta(12.74, $obj->getDiagonalScale(), 0.01);
         imagedestroy($obj->getImage());
     }
-
 
     /**
      * @covers ::getViewbox
@@ -235,7 +236,7 @@ class SVGRasterizerTest extends TestCase
      */
     public function testShouldRenderBackgroundSolidWhite(): void
     {
-        $obj = new SVGRasterizer(32, 32, [], 32, 32, "#FFFFFF");
+        $obj = new SVGRasterizer(32, 32, [], 32, 32, '#FFFFFF');
         $img = $obj->finish();
 
         $this->assertThat($img, new GDSimilarityConstraint('./tests/images/bg-white.png'));
@@ -248,7 +249,7 @@ class SVGRasterizerTest extends TestCase
      */
     public function testShouldRenderBackgroundWhiteSemitransparent(): void
     {
-        $obj = new SVGRasterizer(32, 32, [], 32, 32, "rgba(255,255,255,.5)");
+        $obj = new SVGRasterizer(32, 32, [], 32, 32, 'rgba(255,255,255,.5)');
         $img = $obj->finish();
 
         $this->assertThat($img, new GDSimilarityConstraint('./tests/images/bg-white-semitransparent.png'));

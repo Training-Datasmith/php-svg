@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Rasterization;
 
 use InvalidArgumentException;
@@ -8,8 +10,8 @@ use SVG\Fonts\FontRegistry;
 use SVG\Nodes\SVGNode;
 use SVG\Rasterization\Renderers\Renderer;
 use SVG\Rasterization\Transform\Transform;
-use SVG\Utilities\Units\Length;
 use SVG\Utilities\Colors\Color;
+use SVG\Utilities\Units\Length;
 
 /**
  * This class is the main entry point for the rasterization process.

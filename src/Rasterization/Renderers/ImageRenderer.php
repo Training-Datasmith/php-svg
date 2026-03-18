@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Rasterization\Renderers;
 
-use SVG\SVG;
 use SVG\Nodes\SVGNode;
 use SVG\Rasterization\SVGRasterizer;
+use SVG\SVG;
 
 /**
  * This renderer can draw referenced images (from <image> tags).

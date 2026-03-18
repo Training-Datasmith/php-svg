@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Nodes\Shapes;
 
 use SVG\Rasterization\SVGRasterizer;
@@ -40,7 +42,7 @@ class SVGPolyline extends SVGPolygonalShape
         $rasterizer->render('polygon', [
             'open'      => true,
             'points'    => $this->getPoints(),
-            'fill-rule' => strtolower($this->getComputedStyle('fill-rule') ?: 'nonzero')
+            'fill-rule' => strtolower($this->getComputedStyle('fill-rule') ?: 'nonzero'),
         ], $this);
 
         $rasterizer->popTransform();

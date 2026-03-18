@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Tests\Nodes\Texts;
 
 use PHPUnit\Framework\TestCase;

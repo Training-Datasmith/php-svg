@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Rasterization\Renderers;
 
 use SVG\Fonts\FontRegistry;

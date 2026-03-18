@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Tests\Rasterization\Renderers;
 
 use AssertGD\GDSimilarityConstraint;
@@ -40,7 +42,7 @@ class ImageRendererTest extends TestCase
             'x'      => 1,
             'y'      => 2,
             'width'  => 6,
-            'height' => 6
+            'height' => 6,
         ], $context);
         $img = $rasterizer->finish();
 
@@ -59,7 +61,7 @@ class ImageRendererTest extends TestCase
             'x'      => null,
             'y'      => null,
             'width'  => 6,
-            'height' => 6
+            'height' => 6,
         ], $context);
         $img = $rasterizer->finish();
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Tests\Nodes\Shapes;
 
 use PHPUnit\Framework\TestCase;
@@ -29,7 +31,7 @@ class SVGEllipseTest extends TestCase
             'cx' => '37',
             'cy' => '42',
             'rx' => '100',
-            'ry' => '200'
+            'ry' => '200',
         ], $obj->getSerializableAttributes());
     }
 

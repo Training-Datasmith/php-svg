@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Tests\Nodes\Shapes;
 
 use PHPUnit\Framework\TestCase;
@@ -173,7 +175,7 @@ class SVGPolygonalShapeTest extends TestCase
         $this->assertEquals([
             [42.5, 43.5],
             [37, 38],
-            [-5, 3]
+            [-5, 3],
         ], $obj->getPoints());
 
         // should support comma delimiter
@@ -181,7 +183,7 @@ class SVGPolygonalShapeTest extends TestCase
         $this->assertEquals([
             [42.5, 43.5],
             [37, 38],
-            [-5, 3]
+            [-5, 3],
         ], $obj->getPoints());
     }
 

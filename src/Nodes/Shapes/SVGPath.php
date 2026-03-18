@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Nodes\Shapes;
 
 use SVG\Nodes\SVGNodeContainer;
@@ -71,7 +73,7 @@ class SVGPath extends SVGNodeContainer
 
         $rasterizer->render('path', [
             'commands'  => $commands,
-            'fill-rule' => strtolower($this->getComputedStyle('fill-rule') ?: 'nonzero')
+            'fill-rule' => strtolower($this->getComputedStyle('fill-rule') ?: 'nonzero'),
         ], $this);
 
         $rasterizer->popTransform();

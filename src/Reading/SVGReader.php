@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Reading;
 
 use SimpleXMLElement;
-use SVG\SVG;
 use SVG\Nodes\SVGNode;
 use SVG\Nodes\SVGNodeContainer;
+use SVG\SVG;
 use SVG\Utilities\SVGStyleParser;
 
 /**

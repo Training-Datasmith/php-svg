@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Tests\Nodes\Shapes;
 
 use PHPUnit\Framework\TestCase;
@@ -29,7 +31,7 @@ class SVGLineTest extends TestCase
             'x1' => '11',
             'y1' => '12',
             'x2' => '13',
-            'y2' => '14'
+            'y2' => '14',
         ], $obj->getSerializableAttributes());
     }
 

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Writing;
 
+use SVG\Nodes\CDataContainer;
 use SVG\Nodes\SVGNode;
 use SVG\Nodes\SVGNodeContainer;
-use SVG\Nodes\CDataContainer;
 use SVG\Shims\Str;
 
 /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Fonts;
 
 class FontRegistry
@@ -48,7 +50,7 @@ class FontRegistry
         }, $weight);
 
         // Attempt to match just based on the font family.
-        $match ??= $this->closestMatchBasedOnWeight(fn(FontFile $font) => $anyFontFamily || $font->getFamily() === $family, $weight);
+        $match ??= $this->closestMatchBasedOnWeight(fn (FontFile $font) => $anyFontFamily || $font->getFamily() === $family, $weight);
 
         // Return any font at all, if possible.
         return $match ?? $this->fontFiles[0];

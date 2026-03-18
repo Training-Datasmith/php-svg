@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // PSR-4 autoloader implementation, taken from:
 // https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader-examples.md
 // which is licensed under MIT.

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Reading;
 
 use SVG\Nodes\Embedded\SVGForeignObject;
@@ -60,8 +62,8 @@ use SVG\Nodes\Structures\SVGStyle;
 use SVG\Nodes\Structures\SVGSwitch;
 use SVG\Nodes\Structures\SVGSymbol;
 use SVG\Nodes\Structures\SVGUse;
-use SVG\Nodes\SVGNode;
 use SVG\Nodes\SVGGenericNodeType;
+use SVG\Nodes\SVGNode;
 use SVG\Nodes\Texts\SVGDesc;
 use SVG\Nodes\Texts\SVGText;
 use SVG\Nodes\Texts\SVGTextPath;

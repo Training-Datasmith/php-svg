@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SVG\Tests\Rasterization\Transform;
 
 use PHPUnit\Framework\TestCase;
