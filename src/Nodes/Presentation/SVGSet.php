@@ -12,11 +12,6 @@ class SVGSet extends SVGNodeContainer
 {
     public const TAG_NAME = 'set';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

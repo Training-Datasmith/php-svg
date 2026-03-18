@@ -12,11 +12,6 @@ class SVGFEColorMatrix extends SVGNodeContainer
 {
     public const TAG_NAME = 'feColorMatrix';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

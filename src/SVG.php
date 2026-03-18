@@ -17,9 +17,9 @@ class SVG
     /**
      * @var SVGReader $reader The singleton reader used by this class.
      */
-    private static $reader;
+    private static ?\SVG\Reading\SVGReader $reader = null;
 
-    private static $fontRegistry;
+    private static ?\SVG\Fonts\FontRegistry $fontRegistry = null;
 
     /**
      * @var SVGDocumentFragment $document This image's root `svg` node/tag.
@@ -104,7 +104,7 @@ class SVG
      *
      * @return SVG A new image, with the nodes parsed from the XML.
      */
-    public static function fromString($string): ?SVG
+    public static function fromString(string $string): ?SVG
     {
         return self::getReader()->parseString($string);
     }
@@ -148,7 +148,6 @@ class SVG
      * Register a font file to be used when rasterizing text.
      *
      * @param string $path The path to the font file.
-     * @return void
      */
     public static function addFont(string $path): void
     {

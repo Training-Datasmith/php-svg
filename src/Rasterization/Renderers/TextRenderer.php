@@ -122,10 +122,12 @@ class TextRenderer extends MultiPassRenderer
     private static function resolveFontWeight($weight): int
     {
         // TODO implement "bolder" and "lighter"
-
         if (is_numeric($weight)) {
             return (int) $weight;
-        } elseif ($weight === 'bold') {
+        }
+        // TODO implement "bolder" and "lighter"
+
+        if ($weight === 'bold') {
             return 700;
         }
 

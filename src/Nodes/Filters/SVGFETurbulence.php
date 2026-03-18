@@ -12,11 +12,6 @@ class SVGFETurbulence extends SVGNodeContainer
 {
     public const TAG_NAME = 'feTurbulence';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

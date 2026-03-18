@@ -12,7 +12,6 @@ class TrueTypeFontFile extends FontFile
     // OpenType fonts containing CFF data (version 1 or 2) should use 0x4F54544F ('OTTO', when re-interpreted as a Tag)
     // for sfntVersion.
     private const SFNT_VERSION_TTF = 0x00010000;
-    private const SFNT_VERSION_OTF = 0x4F54544F;
 
     private const TABLE_TAG_NAME = 'name';
     private const NAME_ID_FONT_FAMILY = 1;
@@ -168,7 +167,7 @@ class TrueTypeFontFile extends FontFile
 
         // https://learn.microsoft.com/en-us/typography/opentype/spec/name#naming-table-version-0
         // Table version number (0 or 1).
-        $version = self::uint16($file);
+        self::uint16($file);
         // Number of name records.
         $count = self::uint16($file);
         // Offset to start of string storage (from start of table).
@@ -183,7 +182,7 @@ class TrueTypeFontFile extends FontFile
                 $nameRecord['stringLength']
             );
             $id = $nameRecord['nameID'];
-            $names[$id] = self::decodeString($string, $nameRecord['platformID'], $nameRecord['encodingID']);
+            $names[$id] = self::decodeString($string, $nameRecord['platformID']);
         }
 
         // Note: Table version 1 has additional fields after the name records, but we don't need those.
@@ -265,22 +264,19 @@ class TrueTypeFontFile extends FontFile
     }
 
     // https://learn.microsoft.com/en-us/typography/opentype/spec/name#platform-encoding-and-language
-    private static function decodeString(string $string, int $platformID, int $encodingID): string
+    private static function decodeString(string $string, int $platformID): string
     {
         // https://learn.microsoft.com/en-us/typography/opentype/spec/name#platform-ids
         switch ($platformID) {
             case self::PLATFORM_ID_UNICODE:
+            case self::PLATFORM_ID_WINDOWS:
                 // Strings for the Unicode platform must be encoded in UTF-16BE.
                 return mb_convert_encoding($string, 'UTF-8', 'UTF-16BE');
             case self::PLATFORM_ID_MACINTOSH:
+            default:
                 // Strings for the Macintosh platform (platform ID 1) use platform-specific single- or double-byte
                 // encodings according to the specified encoding ID for a given name record.
                 // TODO: implement
-                return $string;
-            case self::PLATFORM_ID_WINDOWS:
-                // All string data for platform 3 must be encoded in UTF-16BE.
-                return mb_convert_encoding($string, 'UTF-8', 'UTF-16BE');
-            default:
                 return $string;
         }
     }

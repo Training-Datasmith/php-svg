@@ -28,9 +28,9 @@ class SVGRasterizer
     /**
      * @var Renderers\Renderer[] $renderers Map of shapes to renderers.
      */
-    private static $renderers;
+    private static array $renderers;
 
-    private $fontRegistry;
+    private ?\SVG\Fonts\FontRegistry $fontRegistry = null;
 
     /**
      * @var float[] The document's viewBox (x, y, w, h).
@@ -52,11 +52,11 @@ class SVGRasterizer
     private $outImage;
 
     // precomputed properties for getter methods, used often during render
-    private $docWidth;
-    private $docHeight;
-    private $diagonalScale;
+    private ?float $docWidth;
+    private ?float $docHeight;
+    private float $diagonalScale;
 
-    private $transformStack;
+    private array $transformStack;
 
     /**
      * @param string|null $docWidth   The original SVG document width, as a string.
@@ -139,8 +139,6 @@ class SVGRasterizer
      *
      * This includes registering all of the standard renderers, as well as
      * preparing the path parser and the path approximator.
-     *
-     * @return void
      */
     private static function createDependencies(): void
     {
@@ -196,7 +194,6 @@ class SVGRasterizer
      * @param array $params       An array of options to pass to the renderer.
      * @param SVGNode $context    The SVGNode that serves as drawing context.
      *
-     * @return void
      *
      * @throws InvalidArgumentException If no such renderer exists.
      */
@@ -311,7 +308,6 @@ class SVGRasterizer
      * <code>pushTransform()</code>. There must be a matching call to <code>popTransform</code> for every call to
      * <code>pushTransform()</code>. Popping a transform when no pushed transform remains is an error.
      *
-     * @return void
      * @throws RuntimeException If trying to pop a transform but the stack contains only the initial transform.
      */
     public function popTransform(): void

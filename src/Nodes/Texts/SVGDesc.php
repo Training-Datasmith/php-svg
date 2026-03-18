@@ -12,11 +12,6 @@ class SVGDesc extends SVGNodeContainer
 {
     public const TAG_NAME = 'desc';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

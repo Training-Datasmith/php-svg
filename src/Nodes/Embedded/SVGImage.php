@@ -37,14 +37,11 @@ class SVGImage extends SVGNodeContainer
     /**
      * Creates a new SVGImage directly from file
      *
-     * @param string     $path
-     * @param string     $mimeType
      * @param mixed $x
      * @param mixed $y
      * @param mixed $width
      * @param mixed $height
      *
-     * @return self
      */
     public static function fromFile(
         string $path,
@@ -72,14 +69,11 @@ class SVGImage extends SVGNodeContainer
     /**
      * Creates a new SVGImage directly from a raw binary image string
      *
-     * @param string     $imageContent
-     * @param string     $mimeType
      * @param mixed $x
      * @param mixed $y
      * @param mixed $width
      * @param mixed $height
      *
-     * @return self
      */
     public static function fromString(
         string $imageContent,

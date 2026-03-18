@@ -12,11 +12,6 @@ class SVGSwitch extends SVGNodeContainer
 {
     public const TAG_NAME = 'switch';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

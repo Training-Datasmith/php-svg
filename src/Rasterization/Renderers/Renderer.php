@@ -32,8 +32,6 @@ abstract class Renderer
      * @param SVGRasterizer $rasterizer The rasterizer to render to.
      * @param array         $options    Associative array of renderer options.
      * @param SVGNode       $context    The SVGNode serving as the context.
-     *
-     * @return void
      */
     abstract public function render(SVGRasterizer $rasterizer, array $options, SVGNode $context): void;
 }

@@ -12,11 +12,6 @@ class SVGFEDisplacementMap extends SVGNodeContainer
 {
     public const TAG_NAME = 'feDisplacementMap';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

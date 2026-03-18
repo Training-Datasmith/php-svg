@@ -102,7 +102,7 @@ class ImageRenderer extends Renderer
             $content  = substr($href, $commaPos + 1);
 
             if (strpos($metadata, ';base64') !== false) {
-                $content = base64_decode($content);
+                return base64_decode($content);
             }
 
             return $content;

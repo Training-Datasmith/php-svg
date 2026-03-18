@@ -12,11 +12,6 @@ class SVGRadialGradient extends SVGNodeContainer
 {
     public const TAG_NAME = 'radialGradient';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

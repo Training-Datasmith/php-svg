@@ -94,7 +94,7 @@ abstract class SVGNode
             unset($this->value);
             return $this;
         }
-        $this->value = (string) $value;
+        $this->value = $value;
         return $this;
     }
 
@@ -306,8 +306,6 @@ abstract class SVGNode
      * Draws this node to the given rasterizer.
      *
      * @param SVGRasterizer $rasterizer The rasterizer to draw to.
-     *
-     * @return void
      */
     abstract public function rasterize(SVGRasterizer $rasterizer): void;
 

@@ -12,11 +12,6 @@ class SVGFEFlood extends SVGNodeContainer
 {
     public const TAG_NAME = 'feFlood';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

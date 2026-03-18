@@ -10,9 +10,4 @@ use SVG\Nodes\SVGNodeContainer;
 class SVGGroup extends SVGNodeContainer
 {
     public const TAG_NAME = 'g';
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
 }

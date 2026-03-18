@@ -10,10 +10,7 @@ class Str
      * This is a shim for PHP's native trim() function.
      * As calling trim() on null is deprecated as of PHP 8.1 this method reproduces the behaviour of <8.1.
      *
-     * @param string|null $string
-     * @param string      $characters
      *
-     * @return string
      */
     public static function trim(?string $string, string $characters = " \n\r\t\v\x00"): string
     {

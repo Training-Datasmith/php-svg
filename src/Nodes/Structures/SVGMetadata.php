@@ -12,11 +12,6 @@ class SVGMetadata extends SVGNodeContainer
 {
     public const TAG_NAME = 'metadata';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

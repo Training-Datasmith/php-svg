@@ -92,13 +92,11 @@ class PolygonBuilder
      *
      * @param float|null $x The point's absolute x coordinate.
      * @param float|null $y The point's absolute y coordinate.
-     *
-     * @return void
      */
     public function addPoint(?float $x, ?float $y): void
     {
-        $x = $x ?? $this->posX;
-        $y = $y ?? $this->posY;
+        $x ??= $this->posX;
+        $y ??= $this->posY;
 
         $this->points[] = [$x, $y];
 
@@ -116,8 +114,6 @@ class PolygonBuilder
      *
      * @param float|null $x The point's relative x coordinate.
      * @param float|null $y The point's relative y coordinate.
-     *
-     * @return void
      */
     public function addPointRelative(?float $x, ?float $y): void
     {
@@ -131,8 +127,6 @@ class PolygonBuilder
      * Appends multiple points with ABSOLUTE coordinates to this polygon.
      *
      * @param array[] $points A point array (array of float 2-tuples).
-     *
-     * @return void
      */
     public function addPoints(array $points): void
     {

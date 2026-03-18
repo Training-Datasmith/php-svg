@@ -12,11 +12,6 @@ class SVGFEBlend extends SVGNodeContainer
 {
     public const TAG_NAME = 'feBlend';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

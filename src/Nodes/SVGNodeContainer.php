@@ -121,7 +121,8 @@ abstract class SVGNodeContainer extends SVGNode
     {
         if (is_int($nodeOrIndex)) {
             return $nodeOrIndex;
-        } elseif ($nodeOrIndex instanceof SVGNode) {
+        }
+        if ($nodeOrIndex instanceof SVGNode) {
             return array_search($nodeOrIndex, $this->children, true);
         }
 
@@ -209,7 +210,7 @@ abstract class SVGNodeContainer extends SVGNode
         }
 
         $nodeStyles = [];
-        if (!empty($this->parent)) {
+        if ($this->parent instanceof \SVG\Nodes\SVGNodeContainer) {
             $nodeStyles = $this->parent->getContainerStyleByPattern($pattern);
         }
 

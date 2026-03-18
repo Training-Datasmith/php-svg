@@ -16,7 +16,7 @@ class SVGPolyline extends SVGPolygonalShape
     /**
      * @param array[] $points Array of points (float 2-tuples).
      */
-    public function __construct($points = [])
+    public function __construct(?array $points = [])
     {
         parent::__construct($points);
     }

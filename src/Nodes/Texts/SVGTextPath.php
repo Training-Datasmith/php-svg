@@ -12,11 +12,6 @@ class SVGTextPath extends SVGNodeContainer
 {
     public const TAG_NAME = 'textPath';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

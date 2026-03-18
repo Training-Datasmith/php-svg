@@ -12,11 +12,6 @@ class SVGMask extends SVGNodeContainer
 {
     public const TAG_NAME = 'mask';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

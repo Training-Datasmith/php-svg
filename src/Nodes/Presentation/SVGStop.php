@@ -12,11 +12,6 @@ class SVGStop extends SVGNodeContainer
 {
     public const TAG_NAME = 'stop';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

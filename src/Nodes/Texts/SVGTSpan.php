@@ -12,11 +12,6 @@ class SVGTSpan extends SVGNodeContainer
 {
     public const TAG_NAME = 'tspan';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

@@ -40,7 +40,6 @@ class SVGText extends SVGNodeContainer
      * Set the CSS font-family property.
      *
      * @param string $fontFamily The value for the CSS font-family property.
-     * @return $this
      */
     public function setFontFamily(string $fontFamily): SVGText
     {
@@ -52,7 +51,6 @@ class SVGText extends SVGNodeContainer
      * Set the CSS font-size property.
      *
      * @param $fontSize mixed The value for the CSS font-size property.
-     * @return $this
      */
     public function setFontSize($fontSize): SVGText
     {

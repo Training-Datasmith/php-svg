@@ -12,11 +12,6 @@ class SVGFEImage extends SVGNodeContainer
 {
     public const TAG_NAME = 'feImage';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

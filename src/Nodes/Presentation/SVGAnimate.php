@@ -12,11 +12,6 @@ class SVGAnimate extends SVGNodeContainer
 {
     public const TAG_NAME = 'animate';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

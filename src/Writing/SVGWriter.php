@@ -44,8 +44,6 @@ class SVGWriter
      * distinguished correctly.
      *
      * @param SVGNode $node The node to write.
-     *
-     * @return void
      */
     public function writeNode(SVGNode $node): void
     {
@@ -86,8 +84,6 @@ class SVGWriter
      * writer's output.
      *
      * @param string[] $namespaces An associative array of attribute strings.
-     *
-     * @return void
      */
     private function appendNamespaces(array $namespaces): void
     {
@@ -124,8 +120,6 @@ class SVGWriter
      * attribute with the value set to that string to this writer's output.
      *
      * @param string[] $styles An associative array of styles for the attribute.
-     *
-     * @return void
      */
     private function appendStyles(array $styles): void
     {
@@ -151,8 +145,6 @@ class SVGWriter
      * writer's output.
      *
      * @param string[] $attrs An associative array of attribute strings.
-     *
-     * @return void
      */
     private function appendAttributes(array $attrs): void
     {
@@ -167,8 +159,6 @@ class SVGWriter
      *
      * @param string $attrName  The attribute name.
      * @param string $attrValue The attribute value.
-     *
-     * @return void
      */
     private function appendAttribute(string $attrName, string $attrValue): void
     {
@@ -184,8 +174,6 @@ class SVGWriter
      * Appends CDATA content given the $cdata value to the writer's output.
      *
      * @param string $cdata The content.
-     *
-     * @return void
      */
     private function writeCdata(string $cdata): void
     {

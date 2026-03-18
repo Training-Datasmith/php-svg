@@ -8,7 +8,7 @@ namespace SVG\Rasterization\Path;
  */
 class ArcApproximator
 {
-    private static $EPSILON = 0.0000001;
+    private static float $EPSILON = 0.0000001;
 
     /**
      * Approximates an elliptical arc segment given the start point, the end

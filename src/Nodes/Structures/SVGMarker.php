@@ -12,11 +12,6 @@ class SVGMarker extends SVGNodeContainer
 {
     public const TAG_NAME = 'marker';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

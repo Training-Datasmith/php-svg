@@ -12,11 +12,6 @@ class SVGFEComposite extends SVGNodeContainer
 {
     public const TAG_NAME = 'feComposite';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

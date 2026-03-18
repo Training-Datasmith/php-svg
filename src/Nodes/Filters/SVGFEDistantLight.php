@@ -12,11 +12,6 @@ class SVGFEDistantLight extends SVGNodeContainer
 {
     public const TAG_NAME = 'feDistantLight';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

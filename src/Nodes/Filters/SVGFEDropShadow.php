@@ -12,11 +12,6 @@ class SVGFEDropShadow extends SVGNodeContainer
 {
     public const TAG_NAME = 'feDropShadow';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

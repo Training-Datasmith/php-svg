@@ -12,11 +12,6 @@ class SVGUse extends SVGNodeContainer
 {
     public const TAG_NAME = 'use';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

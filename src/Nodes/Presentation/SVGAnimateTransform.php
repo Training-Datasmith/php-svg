@@ -12,11 +12,6 @@ class SVGAnimateTransform extends SVGNodeContainer
 {
     public const TAG_NAME = 'animateTransform';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

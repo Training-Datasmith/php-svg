@@ -4,7 +4,7 @@ namespace SVG\Fonts;
 
 class FontRegistry
 {
-    private $fontFiles = [];
+    private array $fontFiles = [];
 
     public function addFont(string $filePath): void
     {
@@ -33,7 +33,7 @@ class FontRegistry
         }
 
         // Attempt to find the closest-weight match with correct family and cursiveness.
-        $match = $this->closestMatchBasedOnWeight(function (FontFile $font) use ($family, $anyFontFamily, $style) {
+        $match = $this->closestMatchBasedOnWeight(function (FontFile $font) use ($family, $anyFontFamily, $style): bool {
             $result = ($anyFontFamily || $font->getFamily() === $family);
             $isItalic = $font->isItalic();
             $isOblique = $font->isOblique();
@@ -48,9 +48,7 @@ class FontRegistry
         }, $weight);
 
         // Attempt to match just based on the font family.
-        $match = $match ?? $this->closestMatchBasedOnWeight(function (FontFile $font) use ($family, $anyFontFamily) {
-            return $anyFontFamily || $font->getFamily() === $family;
-        }, $weight);
+        $match ??= $this->closestMatchBasedOnWeight(fn(FontFile $font) => $anyFontFamily || $font->getFamily() === $family, $weight);
 
         // Return any font at all, if possible.
         return $match ?? $this->fontFiles[0];

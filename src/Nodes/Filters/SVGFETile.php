@@ -12,11 +12,6 @@ class SVGFETile extends SVGNodeContainer
 {
     public const TAG_NAME = 'feTile';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

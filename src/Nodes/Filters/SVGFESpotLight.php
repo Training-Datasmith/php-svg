@@ -12,11 +12,6 @@ class SVGFESpotLight extends SVGNodeContainer
 {
     public const TAG_NAME = 'feSpotLight';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

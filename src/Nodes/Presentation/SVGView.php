@@ -12,11 +12,6 @@ class SVGView extends SVGNodeContainer
 {
     public const TAG_NAME = 'view';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

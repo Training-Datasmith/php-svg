@@ -12,11 +12,6 @@ class SVGFEFuncA extends SVGNodeContainer
 {
     public const TAG_NAME = 'feFuncA';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

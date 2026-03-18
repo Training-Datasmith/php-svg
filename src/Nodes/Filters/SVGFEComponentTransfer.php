@@ -12,11 +12,6 @@ class SVGFEComponentTransfer extends SVGNodeContainer
 {
     public const TAG_NAME = 'feComponentTransfer';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

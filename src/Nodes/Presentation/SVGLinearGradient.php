@@ -12,11 +12,6 @@ class SVGLinearGradient extends SVGNodeContainer
 {
     public const TAG_NAME = 'linearGradient';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

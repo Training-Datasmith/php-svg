@@ -12,11 +12,6 @@ class SVGFEMorphology extends SVGNodeContainer
 {
     public const TAG_NAME = 'feMorphology';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

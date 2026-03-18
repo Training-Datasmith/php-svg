@@ -12,11 +12,6 @@ class SVGFEGaussianBlur extends SVGNodeContainer
 {
     public const TAG_NAME = 'feGaussianBlur';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

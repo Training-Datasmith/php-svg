@@ -12,11 +12,6 @@ class SVGSymbol extends SVGNodeContainer
 {
     public const TAG_NAME = 'symbol';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

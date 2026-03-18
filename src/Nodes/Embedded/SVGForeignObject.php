@@ -12,11 +12,6 @@ class SVGForeignObject extends SVGNodeContainer
 {
     public const TAG_NAME = 'foreignObject';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

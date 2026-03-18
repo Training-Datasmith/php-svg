@@ -12,11 +12,6 @@ class SVGFEOffset extends SVGNodeContainer
 {
     public const TAG_NAME = 'feOffset';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

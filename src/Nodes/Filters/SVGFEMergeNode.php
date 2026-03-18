@@ -12,11 +12,6 @@ class SVGFEMergeNode extends SVGNodeContainer
 {
     public const TAG_NAME = 'feMergeNode';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

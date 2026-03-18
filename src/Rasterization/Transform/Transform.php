@@ -50,14 +50,12 @@ class Transform
     }
 
     // computation functions
-
     /**
      * Map the given coordinates from transformed space into regular space, for example to see where the points of a
      * shape affected by this transform will end up on the rasterized image.
      *
      * @param float $x A reference to the x coordinate. This will be updated with the transform result.
      * @param float $y A reference to the y coordinate. This will be updated with the transform result.
-     * @return void
      */
     public function map(float &$x, float &$y): void
     {
@@ -74,7 +72,6 @@ class Transform
      * @param float $x The x coordinate.
      * @param float $y The y coordinate.
      * @param array $destination A reference to the destination array, into which two new entries will be appended.
-     * @return void
      */
     public function mapInto(float $x, float $y, array &$destination): void
     {
@@ -89,7 +86,6 @@ class Transform
      *
      * @param float $width  The original width.
      * @param float $height The original height.
-     * @return void
      */
     public function resize(float &$width, float &$height): void
     {
@@ -98,7 +94,6 @@ class Transform
     }
 
     // mutation functions
-
     /**
      * Post-multiply this transform by the given transform. The result will be stored on this object.
      * For example, if the given transform represents a translation, calling
@@ -115,7 +110,6 @@ class Transform
      * <code>M := M x T</code>
      *
      * @param Transform $other The transform to multiply this one with.
-     * @return void
      */
     public function multiply(Transform $other): void
     {
@@ -135,7 +129,6 @@ class Transform
      *
      * @param float $dx The horizontal translation distance in terms of the current transform space.
      * @param float $dy The vertical translation distance in terms of the current transform space.
-     * @return void
      */
     public function translate(float $dx, float $dy): void
     {
@@ -155,7 +148,6 @@ class Transform
      *
      * @param float $sx The horizontal scaling factor in terms of the current transform space.
      * @param float $sy The vertical scaling factor in terms of the current transform space.
-     * @return void
      */
     public function scale(float $sx, float $sy): void
     {
@@ -176,7 +168,6 @@ class Transform
      * This is the same as post-multiplying this transform with another transform representing a pure rotation.
      *
      * @param float $radians The rotation angle (positive values representing clockwise rotations).
-     * @return void
      */
     public function rotate(float $radians): void
     {
@@ -207,7 +198,6 @@ class Transform
      * This is the same as post-multiplying this transform with another transform representing a pure horizontal skew.
      *
      * @param float $radians The skew angle.
-     * @return void
      */
     public function skewX(float $radians): void
     {
@@ -228,7 +218,6 @@ class Transform
      * This is the same as post-multiplying this transform with another transform representing a pure vertical skew.
      *
      * @param float $radians The skew angle.
-     * @return void
      */
     public function skewY(float $radians): void
     {

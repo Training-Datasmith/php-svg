@@ -40,8 +40,6 @@ abstract class MultiPassRenderer extends Renderer
     }
 
     /**
-     * @param SVGRasterizer $rasterizer
-     * @param SVGNode $context
      * @param $params
      */
     private function paintStroke(SVGRasterizer $rasterizer, SVGNode $context, $params): void
@@ -62,8 +60,6 @@ abstract class MultiPassRenderer extends Renderer
     }
 
     /**
-     * @param SVGRasterizer $rasterizer
-     * @param SVGNode $context
      * @param $params
      */
     private function paintFill(SVGRasterizer $rasterizer, SVGNode $context, $params): void
@@ -106,8 +102,6 @@ abstract class MultiPassRenderer extends Renderer
      * @param resource $image  The image resource to render to.
      * @param array    $params The render params.
      * @param int      $color  The color (a GD int) to fill the shape with.
-     *
-     * @return void
      */
     abstract protected function renderFill($image, $params, int $color): void;
 
@@ -121,13 +115,10 @@ abstract class MultiPassRenderer extends Renderer
      * @param array    $params The render params.
      * @param int      $color  The color (a GD int) to outline the shape with.
      * @param float    $strokeWidth  The stroke's thickness, in pixels.
-     *
-     * @return void
      */
     abstract protected function renderStroke($image, $params, int $color, float $strokeWidth): void;
 
     /**
-     * @param SVGNode $context
      * @return string[]
      */
     private static function getPaintOrder(SVGNode $context): array

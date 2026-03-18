@@ -93,8 +93,6 @@ class SVGReader
      * @param SVGNode           $node       The node to apply the attributes to.
      * @param SimpleXMLElement  $xml        The attribute source.
      * @param string[]          $namespaces Array of allowed namespace prefixes.
-     *
-     * @return void
      */
     private function applyAttributes(SVGNode $node, SimpleXMLElement $xml, array $namespaces): void
     {
@@ -125,8 +123,6 @@ class SVGReader
      *
      * @param SVGNode           $node The node to apply the styles to.
      * @param SimpleXMLElement  $xml  The attribute source.
-     *
-     * @return void
      */
     private function applyStyles(SVGNode $node, SimpleXMLElement $xml): void
     {
@@ -147,8 +143,6 @@ class SVGReader
      * @param SVGNodeContainer  $node       The node to add the children to.
      * @param SimpleXMLElement  $xml        The XML node containing the children.
      * @param string[]          $namespaces Array of allowed namespace prefixes.
-     *
-     * @return void
      */
     private function addChildren(SVGNodeContainer $node, SimpleXMLElement $xml, array $namespaces): void
     {

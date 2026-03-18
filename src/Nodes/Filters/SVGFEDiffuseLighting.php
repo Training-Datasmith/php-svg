@@ -12,11 +12,6 @@ class SVGFEDiffuseLighting extends SVGNodeContainer
 {
     public const TAG_NAME = 'feDiffuseLighting';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */

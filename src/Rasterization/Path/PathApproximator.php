@@ -54,7 +54,7 @@ class PathApproximator
     /**
      * @var PolygonBuilder|null $builder The current subpath builder.
      */
-    private ?PolygonBuilder $builder;
+    private ?PolygonBuilder $builder = null;
 
     // the start of the current subpath, in path coordinates
     private $firstX;
@@ -71,11 +71,11 @@ class PathApproximator
     /**
      * @var float[] $cubicOld Second control point of last C or S command.
      */
-    private $cubicOld;
+    private ?array $cubicOld = null;
     /**
      * @var float[] $quadraticOld Control point of last Q or T command.
      */
-    private $quadraticOld;
+    private ?array $quadraticOld = null;
 
     /**
      * Construct a new, empty approximator.
@@ -112,8 +112,6 @@ class PathApproximator
      * The behavior when this is called multiple times is unspecified.
      *
      * @param array[] $commands The commands (assoc. arrays; see above).
-     *
-     * @return void
      */
     public function approximate(array $commands): void
     {
@@ -163,8 +161,6 @@ class PathApproximator
      * Complete the current subpath by appending the builder's points as a new subpath array to the array of all
      * subpaths. Subpaths containing no points or only a single point (for example, because their only command was
      * a "moveto") will not be appended.
-     *
-     * @return void
      */
     private function appendSubpath(): void
     {
@@ -179,8 +175,6 @@ class PathApproximator
     /**
      * Append the current subpath, then start a new one at the current position.
      * The builder will also have the current position added to it as a point.
-     *
-     * @return void
      */
     private function newSubpath(): void
     {
@@ -215,7 +209,6 @@ class PathApproximator
      * @param string  $id   The actual id used (for abs. vs. rel.).
      * @param float[] $args The arguments provided to the command.
      *
-     * @return void
      *
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
@@ -238,7 +231,6 @@ class PathApproximator
      * @param string  $id   The actual id used (for abs. vs. rel.).
      * @param float[] $args The arguments provided to the command.
      *
-     * @return void
      *
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
@@ -262,7 +254,6 @@ class PathApproximator
      * @param string  $id   The actual id used (for abs. vs. rel.).
      * @param float[] $args The arguments provided to the command.
      *
-     * @return void
      *
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
@@ -285,7 +276,6 @@ class PathApproximator
      * @param string  $id   The actual id used (for abs. vs. rel.).
      * @param float[] $args The arguments provided to the command.
      *
-     * @return void
      *
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
@@ -308,7 +298,6 @@ class PathApproximator
      * @param string  $id   The actual id used (for abs. vs. rel.).
      * @param float[] $args The arguments provided to the command.
      *
-     * @return void
      *
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
@@ -353,7 +342,6 @@ class PathApproximator
      * @param string  $id   The actual id used (for abs. vs. rel.).
      * @param float[] $args The arguments provided to the command.
      *
-     * @return void
      *
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
@@ -395,7 +383,6 @@ class PathApproximator
      * @param string  $id   The actual id used (for abs. vs. rel.).
      * @param float[] $args The arguments provided to the command.
      *
-     * @return void
      *
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
@@ -429,7 +416,6 @@ class PathApproximator
      * @param string  $id   The actual id used (for abs. vs. rel.).
      * @param float[] $args The arguments provided to the command.
      *
-     * @return void
      *
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
@@ -466,7 +452,6 @@ class PathApproximator
      * @param string  $id   The actual id used (for abs. vs. rel.).
      * @param float[] $args The arguments provided to the command.
      *
-     * @return void
      *
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
@@ -513,22 +498,17 @@ class PathApproximator
     /**
      * Approximation function for ClosePath (Z and z).
      *
-     * @param string  $id   The actual id used (for abs. vs. rel.).
-     * @param float[] $args The arguments provided to the command.
      *
-     * @return void
      *
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
      */
-    private function closePath(string $id, array $args): void
+    private function closePath(): void
     {
         $first = $this->builder->getFirstPoint();
         $this->builder->addPoint($first[0], $first[1]);
-
         $this->posX = $this->firstX;
         $this->posY = $this->firstY;
-
         // The subpath is now complete and any following command should start a new one.
         // Also, since ClosePath can be immediately followed by a command such as LineTo,
         // we append ClosePath's position as a point to the new subpath.
