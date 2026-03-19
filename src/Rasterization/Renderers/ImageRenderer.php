@@ -110,6 +110,12 @@ class ImageRenderer extends Renderer
             return $content;
         }
 
+        // Only allow http and https schemes to prevent SSRF via file://, phar://, php://, etc.
+        $scheme = strtolower((string) parse_url($href, PHP_URL_SCHEME));
+        if ($scheme !== 'http' && $scheme !== 'https') {
+            return '';
+        }
+
         return file_get_contents($href);
     }
 }
