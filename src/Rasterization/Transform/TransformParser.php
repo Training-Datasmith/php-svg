@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Rasterization\Transform;
 
-final class TransformParser
+final class Transform_Parser
 {
     /**
      * Convert a 'transform' attribute value into a Transform object by starting with the identity transform and
@@ -17,46 +16,32 @@ final class TransformParser
      * @param Transform|null $applyTo The optional starting Transform. If not provided, the identity will be used.
      * @return Transform Either the mutated argument transform, or the newly computed transform.
      */
-    public static function parseTransformString(?string $input, ?Transform $applyTo = null): Transform
+    public static function parse_transform_string(?string $input, ?Transform $apply_to = null): Transform
     {
-        $transform = $applyTo ?? Transform::identity();
+        $transform = $apply_to ?? Transform::identity();
         if ($input === null) {
             return $transform;
         }
-
         // https://www.w3.org/TR/css-transforms-1/#svg-syntax
-
         $matches = [];
-        preg_match_all(
-            '/(translate|scale|rotate|skewX|skewY|matrix)\s*\(\s*([^)]+)\s*\)/',
-            $input,
-            $matches,
-            PREG_SET_ORDER
-        );
-
+        preg_match_all('/(translate|scale|rotate|skewX|skewY|matrix)\s*\(\s*([^)]+)\s*\)/', $input, $matches, PREG_SET_ORDER);
         foreach ($matches as $match) {
             $operation = $match[1];
-            $arguments = self::splitArguments($match[2]);
-
+            $arguments = self::split_arguments($match[2]);
             self::$operation($transform, $arguments);
         }
-
         return $transform;
     }
-
-    private static function splitArguments(string $argumentString): array
+    private static function split_arguments(string $argument_string): array
     {
         $args = [];
-        if ($argumentString !== '') {
-            preg_match_all('/[+-]?(\d*\.\d+|\d+)(e[+-]?\d+)?/', $argumentString, $args);
+        if ($argument_string !== '') {
+            preg_match_all('/[+-]?(\d*\.\d+|\d+)(e[+-]?\d+)?/', $argument_string, $args);
             $args = $args[0];
         }
-
         return $args;
     }
-
     // the following functions are invoked dynamically
-
     /**
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
@@ -67,7 +52,6 @@ final class TransformParser
             $transform->translate((float) $arguments[0], (float) $arguments[1]);
         }
     }
-
     /**
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
@@ -78,7 +62,6 @@ final class TransformParser
             $transform->scale((float) $arguments[0], (float) $arguments[1]);
         }
     }
-
     /**
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
@@ -89,29 +72,26 @@ final class TransformParser
             $transform->rotate(deg2rad((float) $arguments[0]));
         }
     }
-
     /**
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
      */
-    private static function skewX(Transform $transform, array $arguments): void
+    private static function skew_x(Transform $transform, array $arguments): void
     {
         if (count($arguments) === 1) {
-            $transform->skewX(deg2rad((float) $arguments[0]));
+            $transform->skew_x(deg2rad((float) $arguments[0]));
         }
     }
-
     /**
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection
      */
-    private static function skewY(Transform $transform, array $arguments): void
+    private static function skew_y(Transform $transform, array $arguments): void
     {
         if (count($arguments) === 1) {
-            $transform->skewY(deg2rad((float) $arguments[0]));
+            $transform->skew_y(deg2rad((float) $arguments[0]));
         }
     }
-
     /**
      * @SuppressWarnings("unused")
      * @noinspection PhpUnusedPrivateMethodInspection

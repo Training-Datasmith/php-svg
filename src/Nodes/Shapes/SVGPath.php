@@ -1,41 +1,34 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Nodes\Shapes;
 
-use SVG\Nodes\SVGNodeContainer;
-use SVG\Rasterization\Path\PathParser;
-use SVG\Rasterization\SVGRasterizer;
-use SVG\Rasterization\Transform\TransformParser;
-
+use SVG\Nodes\Svg_Node_Container;
+use SVG\Rasterization\Path\Path_Parser;
+use SVG\Rasterization\Svg_Rasterizer;
+use SVG\Rasterization\Transform\Transform_Parser;
 /**
  * Represents the SVG tag 'path'.
  */
-class SVGPath extends SVGNodeContainer
+class Svg_Path extends Svg_Node_Container
 {
     public const TAG_NAME = 'path';
-
-    private static PathParser $pathParser;
-
+    private static Path_Parser $path_parser;
     /**
      * @param string|null $d The path description.
      */
     public function __construct(?string $d = null)
     {
         parent::__construct();
-
-        $this->setAttribute('d', $d);
+        $this->set_attribute('d', $d);
     }
-
     /**
      * @return string|null The path description string.
      */
-    public function getDescription(): ?string
+    public function get_description(): ?string
     {
-        return $this->getAttribute('d');
+        return $this->get_attribute('d');
     }
-
     /**
      * Sets the path description string.
      *
@@ -43,46 +36,34 @@ class SVGPath extends SVGNodeContainer
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setDescription(?string $d): SVGPath
+    public function set_description(?string $d): Svg_Path
     {
-        return $this->setAttribute('d', $d);
+        return $this->set_attribute('d', $d);
     }
-
     /**
      * @inheritdoc
      */
-    public function rasterize(SVGRasterizer $rasterizer): void
+    public function rasterize(Svg_Rasterizer $rasterizer): void
     {
-        if ($this->getComputedStyle('display') === 'none') {
+        if ($this->get_computed_style('display') === 'none') {
             return;
         }
-
-        $visibility = $this->getComputedStyle('visibility');
+        $visibility = $this->get_computed_style('visibility');
         if ($visibility === 'hidden' || $visibility === 'collapse') {
             return;
         }
-
-        $d = $this->getDescription();
+        $d = $this->get_description();
         if (!isset($d)) {
             return;
         }
-
-        $commands = self::getPathParser()->parse($d);
-
-        TransformParser::parseTransformString($this->getAttribute('transform'), $rasterizer->pushTransform());
-
-        $rasterizer->render('path', [
-            'commands'  => $commands,
-            'fill-rule' => strtolower($this->getComputedStyle('fill-rule') ?: 'nonzero'),
-        ], $this);
-
-        $rasterizer->popTransform();
+        $commands = self::get_path_parser()->parse($d);
+        Transform_Parser::parse_transform_string($this->get_attribute('transform'), $rasterizer->push_transform());
+        $rasterizer->render('path', ['commands' => $commands, 'fill-rule' => strtolower($this->get_computed_style('fill-rule') ?: 'nonzero')], $this);
+        $rasterizer->pop_transform();
     }
-
-    private static function getPathParser(): PathParser
+    private static function get_path_parser(): Path_Parser
     {
-        self::$pathParser ??= new PathParser();
-
-        return self::$pathParser;
+        self::$path_parser ??= new Path_Parser();
+        return self::$path_parser;
     }
 }

@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Rasterization\Renderers;
 
-use SVG\Fonts\FontRegistry;
+use SVG\Fonts\Font_Registry;
 use SVG\Rasterization\Transform\Transform;
-
 /**
  * This renderer can draw polygons and polylines.
  * The points are provided as arrays with 2 entries: 0 => x coord, 1 => y coord.
@@ -16,43 +14,36 @@ use SVG\Rasterization\Transform\Transform;
  * - array[] points: array of coordinate tuples (i.e., array of array of float)
  * - string fill-rule: Either 'evenodd' or 'nonzero'. Defaults to 'nonzero'.
  */
-class PolygonRenderer extends MultiPassRenderer
+class Polygon_Renderer extends Multi_Pass_Renderer
 {
     /**
      * @inheritdoc
      */
-    protected function prepareRenderParams(array $options, Transform $transform, ?FontRegistry $fontRegistry): ?array
+    protected function prepare_render_params(array $options, Transform $transform, ?Font_Registry $font_registry): ?array
     {
         $points = [];
         foreach ($options['points'] as $point) {
-            $transform->mapInto($point[0], $point[1], $points);
+            $transform->map_into($point[0], $point[1], $points);
         }
-
-        return [
-            'open'      => $options['open'] ?? false,
-            'points'    => $points,
-            'fill-rule' => $options['fill-rule'],
-        ];
+        return ['open' => $options['open'] ?? false, 'points' => $points, 'fill-rule' => $options['fill-rule']];
     }
-
     /**
      * @inheritdoc
      */
-    protected function renderFill($image, $params, int $color): void
+    protected function render_fill($image, $params, int $color): void
     {
         // Filling a polygon is equivalent to filling a path containing just a single polygonal subpath.
-        PathRendererImplementation::fillMultipath($image, [$params['points']], $color, $params['fill-rule']);
+        Path_Renderer_Implementation::fill_multipath($image, [$params['points']], $color, $params['fill-rule']);
     }
-
     /**
      * @inheritdoc
      */
-    protected function renderStroke($image, $params, int $color, float $strokeWidth): void
+    protected function render_stroke($image, $params, int $color, float $stroke_width): void
     {
         if ($params['open']) {
-            PathRendererImplementation::strokeOpenSubpath($image, $params['points'], $color, $strokeWidth);
+            Path_Renderer_Implementation::stroke_open_subpath($image, $params['points'], $color, $stroke_width);
             return;
         }
-        PathRendererImplementation::strokeClosedSubpath($image, $params['points'], $color, $strokeWidth);
+        Path_Renderer_Implementation::stroke_closed_subpath($image, $params['points'], $color, $stroke_width);
     }
 }

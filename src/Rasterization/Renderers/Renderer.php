@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Rasterization\Renderers;
 
-use SVG\Nodes\SVGNode;
-use SVG\Rasterization\SVGRasterizer;
-
+use SVG\Nodes\Svg_Node;
+use SVG\Rasterization\Svg_Rasterizer;
 /**
  * This is the base class for all shape renderer instances.
  *
@@ -35,5 +33,5 @@ abstract class Renderer
      * @param array         $options    Associative array of renderer options.
      * @param SVGNode       $context    The SVGNode serving as the context.
      */
-    abstract public function render(SVGRasterizer $rasterizer, array $options, SVGNode $context): void;
+    abstract public function render(Svg_Rasterizer $rasterizer, array $options, Svg_Node $context): void;
 }

@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Utilities\Units;
 
 use SVG\Shims\Str;
-
 final class Angle
 {
     /**
@@ -19,23 +17,22 @@ final class Angle
      */
     public static function convert(?string $input): ?float
     {
-        $normalizedInput = Str::trim($input);
-
+        $normalized_input = Str::trim($input);
         $regex = '/^([+-]?\d*\.?\d*)(deg|rad|grad|turn)?$/';
-        if (!preg_match($regex, $normalizedInput, $matches) || $matches[1] === '') {
+        if (!preg_match($regex, $normalized_input, $matches) || $matches[1] === '') {
             return null;
         }
-
         $factors = [
-            'deg'  => (1),          // base unit
-            'rad'  => (180 / M_PI), // 1rad = (180/pi)deg
-            'grad' => (9 / 10),     // 10grad = 9deg
-            'turn' => (360),        // 1turn = 360deg
+            'deg' => 1,
+            // base unit
+            'rad' => 180 / M_PI,
+            // 1rad = (180/pi)deg
+            'grad' => 9 / 10,
+            // 10grad = 9deg
+            'turn' => 360,
         ];
-
         $value = (float) $matches[1];
-        $unit  = empty($matches[2]) ? 'deg' : $matches[2];
-
+        $unit = empty($matches[2]) ? 'deg' : $matches[2];
         return $value * $factors[$unit];
     }
 }

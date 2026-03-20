@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG;
 
-use SVG\Fonts\FontRegistry;
-use SVG\Nodes\Structures\SVGDocumentFragment;
-use SVG\Rasterization\SVGRasterizer;
-use SVG\Reading\SVGReader;
-use SVG\Writing\SVGWriter;
-
+use SVG\Fonts\Font_Registry;
+use SVG\Nodes\Structures\Svg_Document_Fragment;
+use SVG\Rasterization\Svg_Rasterizer;
+use SVG\Reading\Svg_Reader;
+use SVG\Writing\Svg_Writer;
 /**
  * This is the main class for any SVG image, as it hosts the document root and
  * offers conversion methods.
@@ -19,32 +17,27 @@ class SVG
     /**
      * @var SVGReader $reader The singleton reader used by this class.
      */
-    private static ?\SVG\Reading\SVGReader $reader = null;
-
-    private static ?\SVG\Fonts\FontRegistry $fontRegistry = null;
-
+    private static ?\SVG\Reading\Svg_Reader $reader = null;
+    private static ?\SVG\Fonts\Font_Registry $font_registry = null;
     /**
      * @var SVGDocumentFragment $document This image's root `svg` node/tag.
      */
-    private SVGDocumentFragment $document;
-
+    private Svg_Document_Fragment $document;
     /**
      * @param mixed $width    The image's width (any CSS length).
      * @param mixed $height   The image's height (any CSS length).
      */
     public function __construct($width = null, $height = null)
     {
-        $this->document = new SVGDocumentFragment($width, $height);
+        $this->document = new Svg_Document_Fragment($width, $height);
     }
-
     /**
      * @return SVGDocumentFragment The document/root node of this image.
      */
-    public function getDocument(): SVGDocumentFragment
+    public function get_document(): Svg_Document_Fragment
     {
         return $this->document;
     }
-
     /**
      * Converts this image into a rasterized GD resource of the given size.
      *
@@ -59,27 +52,23 @@ class SVG
      *
      * @return resource The rasterized image as a GD resource (with alpha).
      */
-    public function toRasterImage(int $width, int $height, ?string $background = null)
+    public function to_raster_image(int $width, int $height, ?string $background = null)
     {
-        $docWidth  = $this->document->getWidth();
-        $docHeight = $this->document->getHeight();
-        $viewBox = $this->document->getViewBox();
-
-        $rasterizer = new SVGRasterizer($docWidth, $docHeight, $viewBox, $width, $height, $background);
-        $rasterizer->setFontRegistry(self::getFontRegistry());
+        $doc_width = $this->document->get_width();
+        $doc_height = $this->document->get_height();
+        $view_box = $this->document->get_view_box();
+        $rasterizer = new Svg_Rasterizer($doc_width, $doc_height, $view_box, $width, $height, $background);
+        $rasterizer->set_font_registry(self::get_font_registry());
         $this->document->rasterize($rasterizer);
-
         return $rasterizer->finish();
     }
-
     /**
      * @see SVG::toXMLString() For the implementation (this is a wrapper).
      */
     public function __toString(): string
     {
-        return $this->toXMLString();
+        return $this->to_xml_string();
     }
-
     /**
      * Converts this image's document tree into an XML source code string.
      *
@@ -91,14 +80,12 @@ class SVG
      *
      * @return string This image's document tree as an XML string.
      */
-    public function toXMLString(bool $standalone = true): string
+    public function to_xml_string(bool $standalone = true): string
     {
-        $writer = new SVGWriter($standalone);
-        $writer->writeNode($this->document);
-
-        return $writer->getString();
+        $writer = new Svg_Writer($standalone);
+        $writer->write_node($this->document);
+        return $writer->get_string();
     }
-
     /**
      * Parses the given XML string into an instance of this class.
      *
@@ -106,11 +93,10 @@ class SVG
      *
      * @return SVG A new image, with the nodes parsed from the XML.
      */
-    public static function fromString(string $string): ?SVG
+    public static function from_string(string $string): ?SVG
     {
-        return self::getReader()->parseString($string);
+        return self::get_reader()->parse_string($string);
     }
-
     /**
      * Reads the file at the given path as an XML string, and then parses it
      * into an instance of this class.
@@ -119,40 +105,37 @@ class SVG
      *
      * @return SVG A new image, with the nodes parsed from the XML.
      */
-    public static function fromFile(string $file): ?SVG
+    public static function from_file(string $file): ?SVG
     {
-        return self::getReader()->parseFile($file);
+        return self::get_reader()->parse_file($file);
     }
-
     /**
      * @return SVGReader The singleton reader shared across all instances.
      */
-    private static function getReader(): SVGReader
+    private static function get_reader(): Svg_Reader
     {
         if (!isset(self::$reader)) {
-            self::$reader = new SVGReader();
+            self::$reader = new Svg_Reader();
         }
         return self::$reader;
     }
-
     /**
      * @return FontRegistry The singleton font registry.
      */
-    private static function getFontRegistry(): FontRegistry
+    private static function get_font_registry(): Font_Registry
     {
-        if (!isset(self::$fontRegistry)) {
-            self::$fontRegistry = new FontRegistry();
+        if (!isset(self::$font_registry)) {
+            self::$font_registry = new Font_Registry();
         }
-        return self::$fontRegistry;
+        return self::$font_registry;
     }
-
     /**
      * Register a font file to be used when rasterizing text.
      *
      * @param string $path The path to the font file.
      */
-    public static function addFont(string $path): void
+    public static function add_font(string $path): void
     {
-        self::getFontRegistry()->addFont($path);
+        self::get_font_registry()->add_font($path);
     }
 }

@@ -1,17 +1,15 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Rasterization\Path;
 
 /**
  * This class can approximate elliptical arc segments by calculating a series of
  * points on them (converting them to polylines).
  */
-class ArcApproximator
+class Arc_Approximator
 {
-    private static float $EPSILON = 0.0000001;
-
+    private static float $EPSILON = 1.0E-7;
     /**
      * Approximates an elliptical arc segment given the start point, the end
      * point, the section to use (large or small), the sweep direction,
@@ -35,55 +33,35 @@ class ArcApproximator
      *
      * @return array[] An approximation for the curve, as an array of points.
      */
-    public function approximate(
-        array $start,
-        array $end,
-        bool $large,
-        bool $sweep,
-        float $radiusX,
-        float $radiusY,
-        float $rotation,
-        float $scale = 1.0
-    ): array {
+    public function approximate(array $start, array $end, bool $large, bool $sweep, float $radius_x, float $radius_y, float $rotation, float $scale = 1.0): array
+    {
         // out-of-range parameter handling according to W3; see
         // https://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes
-        if (self::pointsClose($start, $end)) {
+        if (self::points_close($start, $end)) {
             // arc with equal points is treated as nonexistent
             return [];
         }
-        $radiusX = abs($radiusX);
-        $radiusY = abs($radiusY);
-        if ($radiusX < self::$EPSILON || $radiusY < self::$EPSILON) {
+        $radius_x = abs($radius_x);
+        $radius_y = abs($radius_y);
+        if ($radius_x < self::$EPSILON || $radius_y < self::$EPSILON) {
             // arc with no radius is treated as straight line
             return [$start, $end];
         }
-
         $cosr = cos($rotation);
         $sinr = sin($rotation);
-
-        [$center, $radiusX, $radiusY, $angleStart, $angleDelta] =
-            self::endpointToCenter($start, $end, $large, $sweep, $radiusX, $radiusY, $cosr, $sinr);
-
+        [$center, $radius_x, $radius_y, $angle_start, $angle_delta] = self::endpoint_to_center($start, $end, $large, $sweep, $radius_x, $radius_y, $cosr, $sinr);
         $dist = abs($end[0] - $start[0]) + abs($end[1] - $start[1]);
-        $numSteps = max(2, ceil(abs($angleDelta * $dist * $scale)));
-        $stepSize = $angleDelta / $numSteps;
-
+        $num_steps = max(2, ceil(abs($angle_delta * $dist * $scale)));
+        $step_size = $angle_delta / $num_steps;
         $points = [];
-
-        for ($i = 0; $i <= $numSteps; ++$i) {
-            $angle = $angleStart + $stepSize * $i;
-            $first = $radiusX * cos($angle);
-            $second = $radiusY * sin($angle);
-
-            $points[] = [
-                $cosr * $first - $sinr * $second + $center[0],
-                $sinr * $first + $cosr * $second + $center[1],
-            ];
+        for ($i = 0; $i <= $num_steps; ++$i) {
+            $angle = $angle_start + $step_size * $i;
+            $first = $radius_x * cos($angle);
+            $second = $radius_y * sin($angle);
+            $points[] = [$cosr * $first - $sinr * $second + $center[0], $sinr * $first + $cosr * $second + $center[1]];
         }
-
         return $points;
     }
-
     /**
      * Converts an ellipse in endpoint parameterization (standard for SVG paths)
      * to the corresponding center parameterization (easier to work with).
@@ -110,70 +88,44 @@ class ArcApproximator
      *
      * @return float[] A tuple with (center(cx,cy), radiusX, radiusY, angleStart, angleDelta).
      */
-    private static function endpointToCenter(
-        array $start,
-        array $end,
-        bool $large,
-        bool $sweep,
-        float $radiusX,
-        float $radiusY,
-        float $cosr,
-        float $sinr
-    ): array {
+    private static function endpoint_to_center(array $start, array $end, bool $large, bool $sweep, float $radius_x, float $radius_y, float $cosr, float $sinr): array
+    {
         // Step 1: Compute (x1', y1') [F.6.5.1]
         $xsubhalf = ($start[0] - $end[0]) / 2;
         $ysubhalf = ($start[1] - $end[1]) / 2;
-        $x1prime  = $cosr * $xsubhalf + $sinr * $ysubhalf;
-        $y1prime  = -$sinr * $xsubhalf + $cosr * $ysubhalf;
-
+        $x1prime = $cosr * $xsubhalf + $sinr * $ysubhalf;
+        $y1prime = -$sinr * $xsubhalf + $cosr * $ysubhalf;
         // squares that occur multiple times
-        $rx2 = $radiusX * $radiusX;
-        $ry2 = $radiusY * $radiusY;
+        $rx2 = $radius_x * $radius_x;
+        $ry2 = $radius_y * $radius_y;
         $x1prime2 = $x1prime * $x1prime;
         $y1prime2 = $y1prime * $y1prime;
-
         // Ensure radiuses are large enough [F.6.6.2]
-        $lambdaSqrt = sqrt($x1prime2 / $rx2 + $y1prime2 / $ry2);
-        if ($lambdaSqrt > 1) {
-            $radiusX *= $lambdaSqrt;
-            $radiusY *= $lambdaSqrt;
-            $rx2 = $radiusX * $radiusX;
-            $ry2 = $radiusY * $radiusY;
+        $lambda_sqrt = sqrt($x1prime2 / $rx2 + $y1prime2 / $ry2);
+        if ($lambda_sqrt > 1) {
+            $radius_x *= $lambda_sqrt;
+            $radius_y *= $lambda_sqrt;
+            $rx2 = $radius_x * $radius_x;
+            $ry2 = $radius_y * $radius_y;
         }
-
         // Step 2: Compute (cx', cy') [F.6.5.2]
-        $cxfactor = ($large != $sweep ? 1 : -1) * sqrt(abs(
-            ($rx2 * $ry2 - $rx2 * $y1prime2 - $ry2 * $x1prime2) / ($rx2 * $y1prime2 + $ry2 * $x1prime2)
-        ));
-        $cxprime = $cxfactor *  $radiusX * $y1prime / $radiusY;
-        $cyprime = $cxfactor * -$radiusY * $x1prime / $radiusX;
-
+        $cxfactor = ($large != $sweep ? 1 : -1) * sqrt(abs(($rx2 * $ry2 - $rx2 * $y1prime2 - $ry2 * $x1prime2) / ($rx2 * $y1prime2 + $ry2 * $x1prime2)));
+        $cxprime = $cxfactor * $radius_x * $y1prime / $radius_y;
+        $cyprime = $cxfactor * -$radius_y * $x1prime / $radius_x;
         // Step 3: Compute (cx, cy) from (cx', cy') [F.6.5.3]
-        $centerX = $cosr * $cxprime - $sinr * $cyprime + ($start[0] + $end[0]) / 2;
-        $centerY = $sinr * $cxprime + $cosr * $cyprime + ($start[1] + $end[1]) / 2;
-
+        $center_x = $cosr * $cxprime - $sinr * $cyprime + ($start[0] + $end[0]) / 2;
+        $center_y = $sinr * $cxprime + $cosr * $cyprime + ($start[1] + $end[1]) / 2;
         // Step 4: Compute the angles [F.6.5.5, F.6.5.6]
-        $angleStart = self::vectorAngle(
-            ($x1prime - $cxprime) / $radiusX,
-            ($y1prime - $cyprime) / $radiusY
-        );
-        $angleDelta = self::vectorAngle2(
-            ($x1prime - $cxprime) / $radiusX,
-            ($y1prime - $cyprime) / $radiusY,
-            (-$x1prime - $cxprime) / $radiusX,
-            (-$y1prime - $cyprime) / $radiusY
-        );
-
+        $angle_start = self::vector_angle(($x1prime - $cxprime) / $radius_x, ($y1prime - $cyprime) / $radius_y);
+        $angle_delta = self::vector_angle2(($x1prime - $cxprime) / $radius_x, ($y1prime - $cyprime) / $radius_y, (-$x1prime - $cxprime) / $radius_x, (-$y1prime - $cyprime) / $radius_y);
         // Adapt angles to sweep flags
-        if (!$sweep && $angleDelta > 0) {
-            $angleDelta -= M_PI * 2;
-        } elseif ($sweep && $angleDelta < 0) {
-            $angleDelta += M_PI * 2;
+        if (!$sweep && $angle_delta > 0) {
+            $angle_delta -= M_PI * 2;
+        } elseif ($sweep && $angle_delta < 0) {
+            $angle_delta += M_PI * 2;
         }
-
-        return [[$centerX, $centerY], $radiusX, $radiusY, $angleStart, $angleDelta];
+        return [[$center_x, $center_y], $radius_x, $radius_y, $angle_start, $angle_delta];
     }
-
     /**
      * Computes the angle between a vector and the positive x axis.
      * This is a simplified version of vectorAngle2, where the first vector is
@@ -184,12 +136,11 @@ class ArcApproximator
      *
      * @return float The angle, in radians.
      */
-    private static function vectorAngle(float $vecx, float $vecy): float
+    private static function vector_angle(float $vecx, float $vecy): float
     {
         $norm = hypot($vecx, $vecy);
         return ($vecy >= 0 ? 1 : -1) * acos($vecx / $norm);
     }
-
     /**
      * Computes the angle between two given vectors.
      *
@@ -200,17 +151,14 @@ class ArcApproximator
      *
      * @return float The angle, in radians.
      */
-    private static function vectorAngle2(float $vec1x, float $vec1y, float $vec2x, float $vec2y): float
+    private static function vector_angle2(float $vec1x, float $vec1y, float $vec2x, float $vec2y): float
     {
         // see W3C [F.6.5.4]
         $dotprod = $vec1x * $vec2x + $vec1y * $vec2y;
         $norm = hypot($vec1x, $vec1y) * hypot($vec2x, $vec2y);
-
-        $sign = ($vec1x * $vec2y - $vec1y * $vec2x) >= 0 ? 1 : -1;
-
+        $sign = $vec1x * $vec2y - $vec1y * $vec2x >= 0 ? 1 : -1;
         return $sign * acos($dotprod / $norm);
     }
-
     /**
      * Determine whether two points are basically the same, except for minuscule
      * differences.
@@ -219,11 +167,10 @@ class ArcApproximator
      * @param float[] $vec2 The end point (x1, y1).
      * @return bool Whether the points are close.
      */
-    private static function pointsClose(array $vec1, array $vec2): bool
+    private static function points_close(array $vec1, array $vec2): bool
     {
-        $distanceX = abs($vec1[0] - $vec2[0]);
-        $distanceY = abs($vec1[1] - $vec2[1]);
-
-        return $distanceX < self::$EPSILON && $distanceY < self::$EPSILON;
+        $distance_x = abs($vec1[0] - $vec2[0]);
+        $distance_y = abs($vec1[1] - $vec2[1]);
+        return $distance_x < self::$EPSILON && $distance_y < self::$EPSILON;
     }
 }

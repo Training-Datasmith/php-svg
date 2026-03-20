@@ -1,20 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Nodes\Shapes;
 
-use SVG\Rasterization\SVGRasterizer;
-use SVG\Rasterization\Transform\TransformParser;
-
+use SVG\Rasterization\Svg_Rasterizer;
+use SVG\Rasterization\Transform\Transform_Parser;
 /**
  * Represents the SVG tag 'polyline'.
  * Offers methods for manipulating the list of points.
  */
-class SVGPolyline extends SVGPolygonalShape
+class Svg_Polyline extends Svg_Polygonal_Shape
 {
     public const TAG_NAME = 'polyline';
-
     /**
      * @param array[] $points Array of points (float 2-tuples).
      */
@@ -22,29 +19,20 @@ class SVGPolyline extends SVGPolygonalShape
     {
         parent::__construct($points);
     }
-
     /**
      * @inheritdoc
      */
-    public function rasterize(SVGRasterizer $rasterizer): void
+    public function rasterize(Svg_Rasterizer $rasterizer): void
     {
-        if ($this->getComputedStyle('display') === 'none') {
+        if ($this->get_computed_style('display') === 'none') {
             return;
         }
-
-        $visibility = $this->getComputedStyle('visibility');
+        $visibility = $this->get_computed_style('visibility');
         if ($visibility === 'hidden' || $visibility === 'collapse') {
             return;
         }
-
-        TransformParser::parseTransformString($this->getAttribute('transform'), $rasterizer->pushTransform());
-
-        $rasterizer->render('polygon', [
-            'open'      => true,
-            'points'    => $this->getPoints(),
-            'fill-rule' => strtolower($this->getComputedStyle('fill-rule') ?: 'nonzero'),
-        ], $this);
-
-        $rasterizer->popTransform();
+        Transform_Parser::parse_transform_string($this->get_attribute('transform'), $rasterizer->push_transform());
+        $rasterizer->render('polygon', ['open' => true, 'points' => $this->get_points(), 'fill-rule' => strtolower($this->get_computed_style('fill-rule') ?: 'nonzero')], $this);
+        $rasterizer->pop_transform();
     }
 }

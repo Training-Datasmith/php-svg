@@ -1,22 +1,19 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Nodes\Shapes;
 
-use SVG\Nodes\SVGNodeContainer;
-use SVG\Rasterization\SVGRasterizer;
-use SVG\Rasterization\Transform\TransformParser;
+use SVG\Nodes\Svg_Node_Container;
+use SVG\Rasterization\Svg_Rasterizer;
+use SVG\Rasterization\Transform\Transform_Parser;
 use SVG\Utilities\Units\Length;
-
 /**
  * Represents the SVG tag 'rect'.
  * Has the special attributes x, y, width, height, rx, ry.
  */
-class SVGRect extends SVGNodeContainer
+class Svg_Rect extends Svg_Node_Container
 {
     public const TAG_NAME = 'rect';
-
     /**
      * @param mixed $x      The x coordinate of the upper left corner.
      * @param mixed $y      The y coordinate of the upper left corner.
@@ -26,21 +23,18 @@ class SVGRect extends SVGNodeContainer
     public function __construct($x = null, $y = null, $width = null, $height = null)
     {
         parent::__construct();
-
-        $this->setAttribute('x', $x);
-        $this->setAttribute('y', $y);
-        $this->setAttribute('width', $width);
-        $this->setAttribute('height', $height);
+        $this->set_attribute('x', $x);
+        $this->set_attribute('y', $y);
+        $this->set_attribute('width', $width);
+        $this->set_attribute('height', $height);
     }
-
     /**
      * @return string|null The x coordinate of the upper left corner.
      */
-    public function getX(): ?string
+    public function get_x(): ?string
     {
-        return $this->getAttribute('x');
+        return $this->get_attribute('x');
     }
-
     /**
      * Sets the x coordinate of the upper left corner.
      *
@@ -48,19 +42,17 @@ class SVGRect extends SVGNodeContainer
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setX($x): SVGRect
+    public function set_x($x): Svg_Rect
     {
-        return $this->setAttribute('x', $x);
+        return $this->set_attribute('x', $x);
     }
-
     /**
      * @return string|null The y coordinate of the upper left corner.
      */
-    public function getY(): ?string
+    public function get_y(): ?string
     {
-        return $this->getAttribute('y');
+        return $this->get_attribute('y');
     }
-
     /**
      * Sets the y coordinate of the upper left corner.
      *
@@ -68,55 +60,49 @@ class SVGRect extends SVGNodeContainer
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setY($y): SVGRect
+    public function set_y($y): Svg_Rect
     {
-        return $this->setAttribute('y', $y);
+        return $this->set_attribute('y', $y);
     }
-
     /**
      * @return string|null The width.
      */
-    public function getWidth(): ?string
+    public function get_width(): ?string
     {
-        return $this->getAttribute('width');
+        return $this->get_attribute('width');
     }
-
     /**
      * @param mixed $width The new width.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setWidth($width): SVGRect
+    public function set_width($width): Svg_Rect
     {
-        return $this->setAttribute('width', $width);
+        return $this->set_attribute('width', $width);
     }
-
     /**
      * @return string|null The height.
      */
-    public function getHeight(): ?string
+    public function get_height(): ?string
     {
-        return $this->getAttribute('height');
+        return $this->get_attribute('height');
     }
-
     /**
      * @param mixed $height The new height.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setHeight($height): SVGRect
+    public function set_height($height): Svg_Rect
     {
-        return $this->setAttribute('height', $height);
+        return $this->set_attribute('height', $height);
     }
-
     /**
      * @return string|null The x radius of the corners.
      */
-    public function getRX(): ?string
+    public function get_rx(): ?string
     {
-        return $this->getAttribute('rx');
+        return $this->get_attribute('rx');
     }
-
     /**
      * Sets the x radius of the corners.
      *
@@ -124,19 +110,17 @@ class SVGRect extends SVGNodeContainer
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setRX($rx): SVGRect
+    public function set_rx($rx): Svg_Rect
     {
-        return $this->setAttribute('rx', $rx);
+        return $this->set_attribute('rx', $rx);
     }
-
     /**
      * @return string|null The y radius of the corners.
      */
-    public function getRY(): ?string
+    public function get_ry(): ?string
     {
-        return $this->getAttribute('ry');
+        return $this->get_attribute('ry');
     }
-
     /**
      * Sets the y radius of the corners.
      *
@@ -144,36 +128,24 @@ class SVGRect extends SVGNodeContainer
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setRY($ry): SVGRect
+    public function set_ry($ry): Svg_Rect
     {
-        return $this->setAttribute('ry', $ry);
+        return $this->set_attribute('ry', $ry);
     }
-
     /**
      * @inheritdoc
      */
-    public function rasterize(SVGRasterizer $rasterizer): void
+    public function rasterize(Svg_Rasterizer $rasterizer): void
     {
-        if ($this->getComputedStyle('display') === 'none') {
+        if ($this->get_computed_style('display') === 'none') {
             return;
         }
-
-        $visibility = $this->getComputedStyle('visibility');
+        $visibility = $this->get_computed_style('visibility');
         if ($visibility === 'hidden' || $visibility === 'collapse') {
             return;
         }
-
-        TransformParser::parseTransformString($this->getAttribute('transform'), $rasterizer->pushTransform());
-
-        $rasterizer->render('rect', [
-            'x'         => Length::convert($this->getX(), $rasterizer->getDocumentWidth()),
-            'y'         => Length::convert($this->getY(), $rasterizer->getDocumentHeight()),
-            'width'     => Length::convert($this->getWidth(), $rasterizer->getDocumentWidth()),
-            'height'    => Length::convert($this->getHeight(), $rasterizer->getDocumentHeight()),
-            'rx'        => Length::convert($this->getRX(), $rasterizer->getDocumentWidth()),
-            'ry'        => Length::convert($this->getRY(), $rasterizer->getDocumentHeight()),
-        ], $this);
-
-        $rasterizer->popTransform();
+        Transform_Parser::parse_transform_string($this->get_attribute('transform'), $rasterizer->push_transform());
+        $rasterizer->render('rect', ['x' => Length::convert($this->get_x(), $rasterizer->get_document_width()), 'y' => Length::convert($this->get_y(), $rasterizer->get_document_height()), 'width' => Length::convert($this->get_width(), $rasterizer->get_document_width()), 'height' => Length::convert($this->get_height(), $rasterizer->get_document_height()), 'rx' => Length::convert($this->get_rx(), $rasterizer->get_document_width()), 'ry' => Length::convert($this->get_ry(), $rasterizer->get_document_height())], $this);
+        $rasterizer->pop_transform();
     }
 }

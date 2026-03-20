@@ -1,80 +1,70 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Rasterization\Renderers;
 
-use SVG\Fonts\FontRegistry;
-use SVG\Nodes\SVGNode;
-use SVG\Rasterization\SVGRasterizer;
+use SVG\Fonts\Font_Registry;
+use SVG\Nodes\Svg_Node;
+use SVG\Rasterization\Svg_Rasterizer;
 use SVG\Rasterization\Transform\Transform;
 use SVG\Shims\Str;
 use SVG\Utilities\Colors\Color;
 use SVG\Utilities\Units\Length;
-
 /**
  * This extends the Renderer class to offer features for multi-pass rendering
  * of shapes. The render options are first prepared, then given to the primitive
  * methods (stroke, fill).
  */
-abstract class MultiPassRenderer extends Renderer
+abstract class Multi_Pass_Renderer extends Renderer
 {
     /**
      * @inheritdoc
      */
-    public function render(SVGRasterizer $rasterizer, array $options, SVGNode $context): void
+    public function render(Svg_Rasterizer $rasterizer, array $options, Svg_Node $context): void
     {
-        $transform = $rasterizer->getCurrentTransform();
-
-        $params = $this->prepareRenderParams($options, $transform, $rasterizer->getFontRegistry());
+        $transform = $rasterizer->get_current_transform();
+        $params = $this->prepare_render_params($options, $transform, $rasterizer->get_font_registry());
         if (!isset($params)) {
             return;
         }
-
-        $paintOrder = self::getPaintOrder($context);
-        foreach ($paintOrder as $paint) {
+        $paint_order = self::get_paint_order($context);
+        foreach ($paint_order as $paint) {
             if ($paint === 'stroke') {
-                $this->paintStroke($rasterizer, $context, $params);
+                $this->paint_stroke($rasterizer, $context, $params);
             } elseif ($paint === 'fill') {
-                $this->paintFill($rasterizer, $context, $params);
+                $this->paint_fill($rasterizer, $context, $params);
             }
         }
     }
-
     /**
      * @param $params
      */
-    private function paintStroke(SVGRasterizer $rasterizer, SVGNode $context, $params): void
+    private function paint_stroke(Svg_Rasterizer $rasterizer, Svg_Node $context, $params): void
     {
-        $stroke = $context->getComputedStyle('stroke');
+        $stroke = $context->get_computed_style('stroke');
         if (isset($stroke) && $stroke !== 'none') {
-            $strokeOpacity = self::parseOpacity($context->getComputedStyle('stroke-opacity'));
-            $stroke = self::prepareColor($stroke, $context, $strokeOpacity);
-
-            $strokeWidth = $context->getComputedStyle('stroke-width');
-            $strokeWidth = Length::convert($strokeWidth, $rasterizer->getNormalizedDiagonal());
-            $strokeWidth = $strokeWidth * $rasterizer->getDiagonalScale();
-
-            if ($strokeWidth > 0) {
-                $this->renderStroke($rasterizer->getImage(), $params, $stroke, $strokeWidth);
+            $stroke_opacity = self::parse_opacity($context->get_computed_style('stroke-opacity'));
+            $stroke = self::prepare_color($stroke, $context, $stroke_opacity);
+            $stroke_width = $context->get_computed_style('stroke-width');
+            $stroke_width = Length::convert($stroke_width, $rasterizer->get_normalized_diagonal());
+            $stroke_width = $stroke_width * $rasterizer->get_diagonal_scale();
+            if ($stroke_width > 0) {
+                $this->render_stroke($rasterizer->get_image(), $params, $stroke, $stroke_width);
             }
         }
     }
-
     /**
      * @param $params
      */
-    private function paintFill(SVGRasterizer $rasterizer, SVGNode $context, $params): void
+    private function paint_fill(Svg_Rasterizer $rasterizer, Svg_Node $context, $params): void
     {
-        $fill = $context->getComputedStyle('fill');
+        $fill = $context->get_computed_style('fill');
         if (isset($fill) && $fill !== 'none') {
-            $fillOpacity = self::parseOpacity($context->getComputedStyle('fill-opacity'));
-            $fill = self::prepareColor($fill, $context, $fillOpacity);
-
-            $this->renderFill($rasterizer->getImage(), $params, $fill);
+            $fill_opacity = self::parse_opacity($context->get_computed_style('fill-opacity'));
+            $fill = self::prepare_color($fill, $context, $fill_opacity);
+            $this->render_fill($rasterizer->get_image(), $params, $fill);
         }
     }
-
     /**
      * Converts the options array into a new parameters array that the render methods can make more sense of.
      *
@@ -90,8 +80,7 @@ abstract class MultiPassRenderer extends Renderer
      *
      * @return array|null The new associative array of computed render parameters, if there is something to render.
      */
-    abstract protected function prepareRenderParams(array $options, Transform $transform, ?FontRegistry $fontRegistry);
-
+    abstract protected function prepare_render_params(array $options, Transform $transform, ?Font_Registry $font_registry);
     /**
      * Renders the shape's filled version in the given color, using the params
      * array obtained from the prepare method.
@@ -105,8 +94,7 @@ abstract class MultiPassRenderer extends Renderer
      * @param array    $params The render params.
      * @param int      $color  The color (a GD int) to fill the shape with.
      */
-    abstract protected function renderFill($image, $params, int $color): void;
-
+    abstract protected function render_fill($image, $params, int $color): void;
     /**
      * Renders the shape's outline in the given color, using the params array
      * obtained from the prepare method.
@@ -118,27 +106,21 @@ abstract class MultiPassRenderer extends Renderer
      * @param int      $color  The color (a GD int) to outline the shape with.
      * @param float    $strokeWidth  The stroke's thickness, in pixels.
      */
-    abstract protected function renderStroke($image, $params, int $color, float $strokeWidth): void;
-
+    abstract protected function render_stroke($image, $params, int $color, float $stroke_width): void;
     /**
      * @return string[]
      */
-    private static function getPaintOrder(SVGNode $context): array
+    private static function get_paint_order(Svg_Node $context): array
     {
-        $paintOrder = $context->getComputedStyle('paint-order');
-        $paintOrder = preg_replace('#\s{2,}#', ' ', Str::trim($paintOrder));
-
-        $defaultOrder = ['fill', 'stroke', 'markers'];
-
-        if ($paintOrder === 'normal' || empty($paintOrder)) {
-            return $defaultOrder;
+        $paint_order = $context->get_computed_style('paint-order');
+        $paint_order = preg_replace('#\s{2,}#', ' ', Str::trim($paint_order));
+        $default_order = ['fill', 'stroke', 'markers'];
+        if ($paint_order === 'normal' || empty($paint_order)) {
+            return $default_order;
         }
-
-        $paintOrder = array_intersect(explode(' ', $paintOrder), $defaultOrder);
-
-        return array_merge($paintOrder, array_diff($defaultOrder, $paintOrder));
+        $paint_order = array_intersect(explode(' ', $paint_order), $default_order);
+        return array_merge($paint_order, array_diff($default_order, $paint_order));
     }
-
     /**
      * Parses the color string and applies the node's total opacity to it,
      * then returns it as a GD color int.
@@ -149,17 +131,14 @@ abstract class MultiPassRenderer extends Renderer
      *
      * @return int The prepared color as a GD color integer.
      */
-    private static function prepareColor(?string $color, SVGNode $context, float $specificOpacity = 1.0): int
+    private static function prepare_color(?string $color, Svg_Node $context, float $specific_opacity = 1.0): int
     {
         $color = Color::parse($color);
-        $rgb   = ($color[0] << 16) + ($color[1] << 8) + ($color[2]);
-
-        $opacity = self::calculateTotalOpacity($context) * $specificOpacity;
+        $rgb = ($color[0] << 16) + ($color[1] << 8) + $color[2];
+        $opacity = self::calculate_total_opacity($context) * $specific_opacity;
         $a = 127 - $opacity * (int) ($color[3] * 127 / 255);
-
-        return $rgb | ((int)$a << 24);
+        return $rgb | (int) $a << 24;
     }
-
     /**
      * Obtains the node's very own opacity value, as specified in its styles,
      * taking care of 'inherit' and defaulting to 1.
@@ -168,20 +147,17 @@ abstract class MultiPassRenderer extends Renderer
      *
      * @return float The node's own opacity value.
      */
-    private static function getNodeOpacity(SVGNode $node): float
+    private static function get_node_opacity(Svg_Node $node): float
     {
-        $opacity = $node->getStyle('opacity');
-
+        $opacity = $node->get_style('opacity');
         if ($opacity === 'inherit') {
-            $parent = $node->getParent();
+            $parent = $node->get_parent();
             if (isset($parent)) {
-                return self::getNodeOpacity($parent);
+                return self::get_node_opacity($parent);
             }
         }
-
-        return self::parseOpacity($opacity);
+        return self::parse_opacity($opacity);
     }
-
     /**
      * Calculates the node's total opacity by multiplying its own with all of
      * its parents' ones.
@@ -190,44 +166,37 @@ abstract class MultiPassRenderer extends Renderer
      *
      * @return float The node's total opacity.
      */
-    private static function calculateTotalOpacity(SVGNode $node): float
+    private static function calculate_total_opacity(Svg_Node $node): float
     {
-        $opacity = self::getNodeOpacity($node);
-
-        $parent  = $node->getParent();
+        $opacity = self::get_node_opacity($node);
+        $parent = $node->get_parent();
         if (isset($parent)) {
-            return $opacity * self::calculateTotalOpacity($parent);
+            return $opacity * self::calculate_total_opacity($parent);
         }
-
         return $opacity;
     }
-
     /**
      * Parse an alpha value (such as from the 'opacity', 'fill-opacity', or 'stroke-opacity' attributes).
      *
      * @param string|null $value The raw attribute value.
      * @return float The parsed alpha value in the range 0 to 1. Invalid inputs are mapped to 1.
      */
-    private static function parseOpacity(?string $value): float
+    private static function parse_opacity(?string $value): float
     {
         // https://svgwg.org/svg2-draft/render.html#ObjectAndGroupOpacityProperties
         // https://drafts.csswg.org/css-color/#transparency
-
         if ($value === null) {
             return 1;
         }
-
         // real numbers
         if (is_numeric($value)) {
             return (float) $value;
         }
-
         // percentages
         $matches = [];
         if (preg_match('/^([+-]?\d+(?:\.\d+)?|\.\d+)%$/', $value, $matches)) {
             return max(0, min(100, $matches[1])) / 100;
         }
-
         return 1;
     }
 }

@@ -1,22 +1,20 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Reading;
 
-use SimpleXMLElement;
-use SVG\Nodes\SVGNode;
-use SVG\Nodes\SVGNodeContainer;
+use Simple_Xml_Element;
+use SVG\Nodes\Svg_Node;
+use SVG\Nodes\Svg_Node_Container;
 use SVG\SVG;
-use SVG\Utilities\SVGStyleParser;
-
+use SVG\Utilities\Svg_Style_Parser;
 /**
  * This class is used to read XML strings or files and turn them into instances
  * of SVG by parsing the document tree.
  *
  * In contrast to SVGWriter, a single instance can perform any number of reads.
  */
-class SVGReader
+class Svg_Reader
 {
     /**
      * Parses the given string as XML and turns it into an instance of SVG.
@@ -26,13 +24,11 @@ class SVGReader
      *
      * @return SVG|null An image object representing the parse result.
      */
-    public function parseString(string $string): ?SVG
+    public function parse_string(string $string): ?SVG
     {
-        $xml = new SimpleXMLElement($string, LIBXML_PARSEHUGE);
-
-        return $this->parseXML($xml);
+        $xml = new Simple_Xml_Element($string, LIBXML_PARSEHUGE);
+        return $this->parse_xml($xml);
     }
-
     /**
      * Parses the file at the given path/URL as XML and turns it into an
      * instance of SVG.
@@ -44,12 +40,11 @@ class SVGReader
      *
      * @return SVG|null An image object representing the parse result.
      */
-    public function parseFile(string $filename): ?SVG
+    public function parse_file(string $filename): ?SVG
     {
         $xml = simplexml_load_file($filename);
-        return $this->parseXML($xml);
+        return $this->parse_xml($xml);
     }
-
     /**
      * Parses the given XML document into an instance of SVG.
      * Returns null when parsing fails.
@@ -58,31 +53,25 @@ class SVGReader
      *
      * @return SVG|null An image object representing the parse result.
      */
-    public function parseXML(SimpleXMLElement $xml): ?SVG
+    public function parse_xml(Simple_Xml_Element $xml): ?SVG
     {
-        $name = $xml->getName();
+        $name = $xml->get_name();
         if ($name !== 'svg') {
             return null;
         }
-
         $img = new SVG();
-        $doc = $img->getDocument();
-
-        $namespaces = $xml->getNamespaces(true);
-        $doc->setNamespaces($namespaces);
-
-        $nsKeys = array_keys($namespaces);
-        if (!in_array('', $nsKeys, true) && !in_array(null, $nsKeys, true)) {
-            $nsKeys[] = '';
+        $doc = $img->get_document();
+        $namespaces = $xml->get_namespaces(true);
+        $doc->set_namespaces($namespaces);
+        $ns_keys = array_keys($namespaces);
+        if (!in_array('', $ns_keys, true) && !in_array(null, $ns_keys, true)) {
+            $ns_keys[] = '';
         }
-
-        $this->applyAttributes($doc, $xml, $nsKeys);
-        $this->applyStyles($doc, $xml);
-        $this->addChildren($doc, $xml, $nsKeys);
-
+        $this->apply_attributes($doc, $xml, $ns_keys);
+        $this->apply_styles($doc, $xml);
+        $this->add_children($doc, $xml, $ns_keys);
         return $img;
     }
-
     /**
      * Iterates over all XML attributes and applies them to the given node.
      *
@@ -96,26 +85,25 @@ class SVGReader
      * @param SimpleXMLElement  $xml        The attribute source.
      * @param string[]          $namespaces Array of allowed namespace prefixes.
      */
-    private function applyAttributes(SVGNode $node, SimpleXMLElement $xml, array $namespaces): void
+    private function apply_attributes(Svg_Node $node, Simple_Xml_Element $xml, array $namespaces): void
     {
         foreach ($namespaces as $ns) {
             foreach ($xml->attributes($ns, true) as $key => $value) {
                 if ($key === 'style') {
                     continue;
                 }
-                if (AttributeRegistry::isStyle($key)) {
-                    $convertedValue = AttributeRegistry::convertStyleAttribute($key, $value);
-                    $node->setStyle($key, $convertedValue);
+                if (Attribute_Registry::is_style($key)) {
+                    $converted_value = Attribute_Registry::convert_style_attribute($key, $value);
+                    $node->set_style($key, $converted_value);
                     continue;
                 }
                 if (!empty($ns) && $ns !== 'svg') {
                     $key = $ns . ':' . $key;
                 }
-                $node->setAttribute($key, $value);
+                $node->set_attribute($key, $value);
             }
         }
     }
-
     /**
      * Parses the 'style' attribute (if it exists) and applies all styles to the
      * given node.
@@ -126,18 +114,16 @@ class SVGReader
      * @param SVGNode           $node The node to apply the styles to.
      * @param SimpleXMLElement  $xml  The attribute source.
      */
-    private function applyStyles(SVGNode $node, SimpleXMLElement $xml): void
+    private function apply_styles(Svg_Node $node, Simple_Xml_Element $xml): void
     {
         if (!isset($xml['style'])) {
             return;
         }
-
-        $styles = SVGStyleParser::parseStyles($xml['style']);
+        $styles = Svg_Style_Parser::parse_styles($xml['style']);
         foreach ($styles as $key => $value) {
-            $node->setStyle($key, $value);
+            $node->set_style($key, $value);
         }
     }
-
     /**
      * Iterates over all children, parses them into library class instances,
      * and adds them to the given node container.
@@ -146,15 +132,14 @@ class SVGReader
      * @param SimpleXMLElement  $xml        The XML node containing the children.
      * @param string[]          $namespaces Array of allowed namespace prefixes.
      */
-    private function addChildren(SVGNodeContainer $node, SimpleXMLElement $xml, array $namespaces): void
+    private function add_children(Svg_Node_Container $node, Simple_Xml_Element $xml, array $namespaces): void
     {
         foreach ($namespaces as $ns) {
             foreach ($xml->children($ns, true) as $child) {
-                $node->addChild($this->parseNode($ns, $child, $namespaces));
+                $node->add_child($this->parse_node($ns, $child, $namespaces));
             }
         }
     }
-
     /**
      * Parses the given XML element into an instance of a SVGNode subclass.
      * Unknown node types use a generic implementation.
@@ -167,29 +152,25 @@ class SVGReader
      *
      * @SuppressWarnings(PHPMD.ErrorControlOperator)
      */
-    private function parseNode(string $ns, SimpleXMLElement $xml, array $namespaces): SVGNode
+    private function parse_node(string $ns, Simple_Xml_Element $xml, array $namespaces): Svg_Node
     {
-        $tagName = $xml->getName();
+        $tag_name = $xml->get_name();
         if (!empty($ns) && $ns !== 'svg') {
-            $tagName = $ns . ':' . $tagName;
+            $tag_name = $ns . ':' . $tag_name;
         }
-        $node = NodeRegistry::create($tagName);
-
+        $node = Node_Registry::create($tag_name);
         // obtain array of namespaces that are declared directly on this node
-        $extraNamespaces = @$xml->getDocNamespaces(false, false);
-        if (!empty($extraNamespaces)) {
-            $namespaces = array_unique(array_merge($namespaces, array_keys($extraNamespaces)));
-            $node->setNamespaces($extraNamespaces);
+        $extra_namespaces = @$xml->get_doc_namespaces(false, false);
+        if (!empty($extra_namespaces)) {
+            $namespaces = array_unique(array_merge($namespaces, array_keys($extra_namespaces)));
+            $node->set_namespaces($extra_namespaces);
         }
-
-        $this->applyAttributes($node, $xml, $namespaces);
-        $this->applyStyles($node, $xml);
-        $node->setValue($xml);
-
-        if ($node instanceof SVGNodeContainer) {
-            $this->addChildren($node, $xml, $namespaces);
+        $this->apply_attributes($node, $xml, $namespaces);
+        $this->apply_styles($node, $xml);
+        $node->set_value($xml);
+        if ($node instanceof Svg_Node_Container) {
+            $this->add_children($node, $xml, $namespaces);
         }
-
         return $node;
     }
 }

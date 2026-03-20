@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Rasterization\Renderers;
 
-use SVG\Fonts\FontRegistry;
-use SVG\Rasterization\Path\PathApproximator;
+use SVG\Fonts\Font_Registry;
+use SVG\Rasterization\Path\Path_Approximator;
 use SVG\Rasterization\Transform\Transform;
-
 /**
  * This renderer can draw arbitrary paths. It expects the paths to be given as the command format as returned by
  * PathParser. That format consists of an outer array containing one entry per command, with each such entry comprised
@@ -18,18 +16,17 @@ use SVG\Rasterization\Transform\Transform;
  * - array[] commands: The path commands, each containing an id string and an args array.
  * - string fill-rule: Either 'evenodd' or 'nonzero'. Defaults to 'nonzero'.
  */
-class PathRenderer extends MultiPassRenderer
+class Path_Renderer extends Multi_Pass_Renderer
 {
     /**
      * @inheritdoc
      */
-    protected function prepareRenderParams(array $options, Transform $transform, ?FontRegistry $fontRegistry): ?array
+    protected function prepare_render_params(array $options, Transform $transform, ?Font_Registry $font_registry): ?array
     {
-        $approximator = new PathApproximator($transform);
+        $approximator = new Path_Approximator($transform);
         $approximator->approximate($options['commands']);
-
         $subpaths = [];
-        foreach ($approximator->getSubpaths() as $subpath) {
+        foreach ($approximator->get_subpaths() as $subpath) {
             $points = [];
             foreach ($subpath as $point) {
                 $points[] = $point[0];
@@ -37,28 +34,22 @@ class PathRenderer extends MultiPassRenderer
             }
             $subpaths[] = $points;
         }
-
-        return [
-            'subpaths'  => $subpaths,
-            'fill-rule' => $options['fill-rule'],
-        ];
+        return ['subpaths' => $subpaths, 'fill-rule' => $options['fill-rule']];
     }
-
     /**
      * @inheritdoc
      */
-    protected function renderFill($image, $params, int $color): void
+    protected function render_fill($image, $params, int $color): void
     {
-        PathRendererImplementation::fillMultipath($image, $params['subpaths'], $color, $params['fill-rule']);
+        Path_Renderer_Implementation::fill_multipath($image, $params['subpaths'], $color, $params['fill-rule']);
     }
-
     /**
      * @inheritdoc
      */
-    protected function renderStroke($image, $params, int $color, float $strokeWidth): void
+    protected function render_stroke($image, $params, int $color, float $stroke_width): void
     {
         foreach ($params['subpaths'] as $points) {
-            PathRendererImplementation::strokeOpenSubpath($image, $points, $color, $strokeWidth);
+            Path_Renderer_Implementation::stroke_open_subpath($image, $points, $color, $stroke_width);
         }
     }
 }

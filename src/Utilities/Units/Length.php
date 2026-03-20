@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Utilities\Units;
 
 use SVG\Shims\Str;
-
 final class Length
 {
     /**
@@ -19,28 +17,30 @@ final class Length
      *
      * @return float|null The absolute pixel number the given string denotes, or null on parse error.
      */
-    public static function convert(?string $input, ?float $viewLength): ?float
+    public static function convert(?string $input, ?float $view_length): ?float
     {
-        $normalizedInput = Str::trim($input);
-
+        $normalized_input = Str::trim($input);
         $regex = '/^([+-]?\d*\.?\d*)(px|pt|pc|cm|mm|in|%)?$/';
-        if (!preg_match($regex, $normalizedInput, $matches) || $matches[1] === '') {
+        if (!preg_match($regex, $normalized_input, $matches) || $matches[1] === '') {
             return null;
         }
-
         $factors = [
-            'px' => (1),                    // base unit
-            'pt' => (16 / 12),              // 12pt = 16px
-            'pc' => (16),                   // 1pc = 16px
-            'in' => (96),                   // 1in = 96px
-            'cm' => (96 / 2.54),            // 1in = 96px, 1in = 2.54cm
-            'mm' => (96 / 25.4),            // 1in = 96px, 1in = 25.4mm
-            '%'  => (($viewLength ?? 0) / 100),    // 1% = 1/100 of viewLength
+            'px' => 1,
+            // base unit
+            'pt' => 16 / 12,
+            // 12pt = 16px
+            'pc' => 16,
+            // 1pc = 16px
+            'in' => 96,
+            // 1in = 96px
+            'cm' => 96 / 2.54,
+            // 1in = 96px, 1in = 2.54cm
+            'mm' => 96 / 25.4,
+            // 1in = 96px, 1in = 25.4mm
+            '%' => ($view_length ?? 0) / 100,
         ];
-
         $value = (float) $matches[1];
-        $unit  = empty($matches[2]) ? 'px' : $matches[2];
-
+        $unit = empty($matches[2]) ? 'px' : $matches[2];
         return $value * $factors[$unit];
     }
 }

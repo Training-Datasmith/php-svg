@@ -1,33 +1,49 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Rasterization\Path;
 
 use SVG\Shims\Str;
-
 /**
  * This class can convert SVG path description strings into arrays of distinct
  * commands + their arguments.
  */
-class PathParser
+class Path_Parser
 {
     /**
      * @var int[] $commandLengths A map of command ids to their argument counts.
      */
-    private static array $commandLengths = [
-        'M' => 2,   'm' => 2,   // MoveTo
-        'L' => 2,   'l' => 2,   // LineTo
-        'H' => 1,   'h' => 1,   // LineToHorizontal
-        'V' => 1,   'v' => 1,   // LineToVertical
-        'C' => 6,   'c' => 6,   // CurveToCubic
-        'S' => 4,   's' => 4,   // CurveToCubicSmooth
-        'Q' => 4,   'q' => 4,   // CurveToQuadratic
-        'T' => 2,   't' => 2,   // CurveToQuadraticSmooth
-        'A' => 7,   'a' => 7,   // ArcTo
-        'Z' => 0,   'z' => 0,   // ClosePath
+    private static array $command_lengths = [
+        'M' => 2,
+        'm' => 2,
+        // MoveTo
+        'L' => 2,
+        'l' => 2,
+        // LineTo
+        'H' => 1,
+        'h' => 1,
+        // LineToHorizontal
+        'V' => 1,
+        'v' => 1,
+        // LineToVertical
+        'C' => 6,
+        'c' => 6,
+        // CurveToCubic
+        'S' => 4,
+        's' => 4,
+        // CurveToCubicSmooth
+        'Q' => 4,
+        'q' => 4,
+        // CurveToQuadratic
+        'T' => 2,
+        't' => 2,
+        // CurveToQuadraticSmooth
+        'A' => 7,
+        'a' => 7,
+        // ArcTo
+        'Z' => 0,
+        'z' => 0,
     ];
-
     /**
      * Parses a path description into a consecutive array of commands.
      *
@@ -42,24 +58,19 @@ class PathParser
     public function parse(string $description): array
     {
         $commands = [];
-
-        $matches  = [];
-        $idString = implode('', array_keys(self::$commandLengths));
-        preg_match_all('/([' . $idString . '])([^' . $idString . ']*)/', $description, $matches, PREG_SET_ORDER);
-
+        $matches = [];
+        $id_string = implode('', array_keys(self::$command_lengths));
+        preg_match_all('/([' . $id_string . '])([^' . $id_string . ']*)/', $description, $matches, PREG_SET_ORDER);
         foreach ($matches as $match) {
-            $id   = $match[1];
-            $args = $this->splitArguments($match[2]);
-
-            $success = $this->parseCommandChain($id, $args, $commands);
+            $id = $match[1];
+            $args = $this->split_arguments($match[2]);
+            $success = $this->parse_command_chain($id, $args, $commands);
             if (!$success) {
                 break;
             }
         }
-
         return $commands;
     }
-
     /**
      * Splits the given arguments string into an array of strings.
      *
@@ -67,19 +78,16 @@ class PathParser
      *
      * @return string[] The split arguments.
      */
-    private function splitArguments(string $str): array
+    private function split_arguments(string $str): array
     {
         $str = Str::trim($str);
-
         $args = [];
         if ($str !== '') {
             preg_match_all('/[+-]?(\d*\.\d+|\d+)(e[+-]?\d+)?/', $str, $args);
             $args = $args[0];
         }
-
         return $args;
     }
-
     /**
      * Groups the given argument chain into sets and constructs a command array
      * for every set, which is then pushed to the given array reference.
@@ -90,34 +98,25 @@ class PathParser
      *
      * @return bool Whether the command is known AND the arg count is correct.
      */
-    private function parseCommandChain(string $id, array $args, array &$commands): bool
+    private function parse_command_chain(string $id, array $args, array &$commands): bool
     {
-        if (!isset(self::$commandLengths[$id])) {
+        if (!isset(self::$command_lengths[$id])) {
             // unknown command
             return false;
         }
-
-        $length = self::$commandLengths[$id];
-
+        $length = self::$command_lengths[$id];
         if ($length === 0) {
             if (count($args) > 0) {
                 return false;
             }
-            $commands[] = [
-                'id'    => $id,
-                'args'  => $args,
-            ];
+            $commands[] = ['id' => $id, 'args' => $args];
             return true;
         }
-
-        foreach (array_chunk($args, $length) as $subArgs) {
-            if (count($subArgs) !== $length) {
+        foreach (array_chunk($args, $length) as $sub_args) {
+            if (count($sub_args) !== $length) {
                 return false;
             }
-            $commands[] = [
-                'id'    => $id,
-                'args'  => array_map('floatval', $subArgs),
-            ];
+            $commands[] = ['id' => $id, 'args' => array_map('floatval', $sub_args)];
             // If a MoveTo command is followed by additional coordinate pairs,
             // those are interpreted as implicit LineTo commands
             if ($id === 'M') {
@@ -126,7 +125,6 @@ class PathParser
                 $id = 'l';
             }
         }
-
         return true;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Rasterization\Transform;
 
 /**
@@ -22,7 +21,6 @@ namespace SVG\Rasterization\Transform;
 class Transform
 {
     private array $matrix;
-
     /**
      * Create a transform from the given matrix. The entries [a, b, c, d, e, f] represent the following matrix:
      *
@@ -40,7 +38,6 @@ class Transform
     {
         $this->matrix = $matrix;
     }
-
     /**
      * Obtain an identity transform.
      *
@@ -50,7 +47,6 @@ class Transform
     {
         return new self([1, 0, 0, 1, 0, 0]);
     }
-
     // computation functions
     /**
      * Map the given coordinates from transformed space into regular space, for example to see where the points of a
@@ -61,12 +57,11 @@ class Transform
      */
     public function map(float &$x, float &$y): void
     {
-        $mappedX = $this->matrix[0] * $x + $this->matrix[2] * $y + $this->matrix[4];
-        $mappedY = $this->matrix[1] * $x + $this->matrix[3] * $y + $this->matrix[5];
-        $x = $mappedX;
-        $y = $mappedY;
+        $mapped_x = $this->matrix[0] * $x + $this->matrix[2] * $y + $this->matrix[4];
+        $mapped_y = $this->matrix[1] * $x + $this->matrix[3] * $y + $this->matrix[5];
+        $x = $mapped_x;
+        $y = $mapped_y;
     }
-
     /**
      * Given a set of coordinates, this determines the mapped coordinates and appends them consecutively to the
      * destination array.
@@ -75,13 +70,12 @@ class Transform
      * @param float $y The y coordinate.
      * @param array $destination A reference to the destination array, into which two new entries will be appended.
      */
-    public function mapInto(float $x, float $y, array &$destination): void
+    public function map_into(float $x, float $y, array &$destination): void
     {
         $this->map($x, $y);
         $destination[] = $x;
         $destination[] = $y;
     }
-
     /**
      * This computes the side lengths that a rectangle with the given size would end up having,
      * after applying the transform. Note that this doesn't measure the bounding box but the actual width and height.
@@ -91,10 +85,9 @@ class Transform
      */
     public function resize(float &$width, float &$height): void
     {
-        $width  *= hypot($this->matrix[0], $this->matrix[1]);
+        $width *= hypot($this->matrix[0], $this->matrix[1]);
         $height *= hypot($this->matrix[2], $this->matrix[3]);
     }
-
     // mutation functions
     /**
      * Post-multiply this transform by the given transform. The result will be stored on this object.
@@ -115,16 +108,8 @@ class Transform
      */
     public function multiply(Transform $other): void
     {
-        $this->matrix = [
-            $other->matrix[0] * $this->matrix[0] + $other->matrix[1] * $this->matrix[2],
-            $other->matrix[0] * $this->matrix[1] + $other->matrix[1] * $this->matrix[3],
-            $other->matrix[2] * $this->matrix[0] + $other->matrix[3] * $this->matrix[2],
-            $other->matrix[2] * $this->matrix[1] + $other->matrix[3] * $this->matrix[3],
-            $other->matrix[4] * $this->matrix[0] + $other->matrix[5] * $this->matrix[2] + $this->matrix[4],
-            $other->matrix[4] * $this->matrix[1] + $other->matrix[5] * $this->matrix[3] + $this->matrix[5],
-        ];
+        $this->matrix = [$other->matrix[0] * $this->matrix[0] + $other->matrix[1] * $this->matrix[2], $other->matrix[0] * $this->matrix[1] + $other->matrix[1] * $this->matrix[3], $other->matrix[2] * $this->matrix[0] + $other->matrix[3] * $this->matrix[2], $other->matrix[2] * $this->matrix[1] + $other->matrix[3] * $this->matrix[3], $other->matrix[4] * $this->matrix[0] + $other->matrix[5] * $this->matrix[2] + $this->matrix[4], $other->matrix[4] * $this->matrix[1] + $other->matrix[5] * $this->matrix[3] + $this->matrix[5]];
     }
-
     /**
      * Apply a translation to this transform. This object will be mutated as a result of this operation.
      * This is the same as post-multiplying this transform with another transform representing a pure translation.
@@ -139,11 +124,9 @@ class Transform
          * |b d f|  x  |0  1  dy|  =  |b  d  b*dx+d*dy+f|
          * |0 0 1|     |0  0  1 |     |0  0  1          |
          */
-
         $this->matrix[4] += $dx * $this->matrix[0] + $dy * $this->matrix[2];
         $this->matrix[5] += $dx * $this->matrix[1] + $dy * $this->matrix[3];
     }
-
     /**
      * Apply a scale to this transform. This object will be mutated as a result of this operation.
      * This is the same as post-multiplying this transform with another transform representing a pure scale.
@@ -158,13 +141,11 @@ class Transform
          * |b d f|  x  |0   sy  0|  =  |b*sx  d*sy  f|
          * |0 0 1|     |0   0   1|     |0     0     1|
          */
-
         $this->matrix[0] *= $sx;
         $this->matrix[1] *= $sx;
         $this->matrix[2] *= $sy;
         $this->matrix[3] *= $sy;
     }
-
     /**
      * Apply a rotation to this transform. This object will be mutated as a result of this operation.
      * This is the same as post-multiplying this transform with another transform representing a pure rotation.
@@ -178,59 +159,50 @@ class Transform
          * |b d f|  x  |sin(t)   cos(t)  0|  =  |b*cos(t)+d*sin(t)  d*cos(t)-b*sin(t)  f|
          * |0 0 1|     |0        0       1|     |0                  0                  1|
          */
-
         $sin = sin($radians);
         $cos = cos($radians);
-
         // compute new entries
         $a = $this->matrix[0] * $cos + $this->matrix[2] * $sin;
         $b = $this->matrix[1] * $cos + $this->matrix[3] * $sin;
         $c = $this->matrix[2] * $cos - $this->matrix[0] * $sin;
         $d = $this->matrix[3] * $cos - $this->matrix[1] * $sin;
-
         // now we don't need the original entries, we can assign
         $this->matrix[0] = $a;
         $this->matrix[1] = $b;
         $this->matrix[2] = $c;
         $this->matrix[3] = $d;
     }
-
     /**
      * Apply a horizontal skew to this transform. This object will be mutated as a result of this operation.
      * This is the same as post-multiplying this transform with another transform representing a pure horizontal skew.
      *
      * @param float $radians The skew angle.
      */
-    public function skewX(float $radians): void
+    public function skew_x(float $radians): void
     {
         /*
          * |a c e|     |1  tan(t)  0|     |a  a*tan(t)+c  e|
          * |b d f|  x  |0  1       0|  =  |b  b*tan(t)+d  f|
          * |0 0 1|     |0  0       1|     |0     0        1|
          */
-
         $tan = tan($radians);
-
         $this->matrix[2] += $this->matrix[0] * $tan;
         $this->matrix[3] += $this->matrix[1] * $tan;
     }
-
     /**
      * Apply a vertical skew to this transform. This object will be mutated as a result of this operation.
      * This is the same as post-multiplying this transform with another transform representing a pure vertical skew.
      *
      * @param float $radians The skew angle.
      */
-    public function skewY(float $radians): void
+    public function skew_y(float $radians): void
     {
         /*
          * |a c e|     |1       0  0|     |a+c*tan(t)  c  e|
          * |b d f|  x  |tan(t)  1  0|  =  |b+d*tan(t)  d  f|
          * |0 0 1|     |0       0  1|     |0           0  1|
          */
-
         $tan = tan($radians);
-
         $this->matrix[0] += $this->matrix[2] * $tan;
         $this->matrix[1] += $this->matrix[3] * $tan;
     }

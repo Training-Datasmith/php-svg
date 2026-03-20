@@ -1,13 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Reading;
 
 /**
  * Base interface for SVG presentation attribute => CSS property converters.
  */
-interface AttributeConverter
+interface Attribute_Converter
 {
     /**
      * Convert the given attribute value into a valid CSS property value.

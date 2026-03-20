@@ -1,40 +1,35 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Writing;
 
-use SVG\Nodes\CDataContainer;
-use SVG\Nodes\SVGNode;
-use SVG\Nodes\SVGNodeContainer;
+use SVG\Nodes\C_Data_Container;
+use SVG\Nodes\Svg_Node;
+use SVG\Nodes\Svg_Node_Container;
 use SVG\Shims\Str;
-
 /**
  * This class is used for composing ("writing") XML strings from nodes.
  * Every instance corresponds to one output string.
  */
-class SVGWriter
+class Svg_Writer
 {
     /**
      * @var string $outString The XML output string being written
      */
-    private string $outString = '';
-
-    public function __construct(bool $isStandalone = true)
+    private string $out_string = '';
+    public function __construct(bool $is_standalone = true)
     {
-        if ($isStandalone) {
-            $this->outString = '<?xml version="1.0" encoding="utf-8"?>';
+        if ($is_standalone) {
+            $this->out_string = '<?xml version="1.0" encoding="utf-8"?>';
         }
     }
-
     /**
      * @return string The XML output string up until the point currently written.
      */
-    public function getString(): string
+    public function get_string(): string
     {
-        return $this->outString;
+        return $this->out_string;
     }
-
     /**
      * Converts the given node into its XML representation and appends that to
      * this writer's output string.
@@ -47,57 +42,48 @@ class SVGWriter
      *
      * @param SVGNode $node The node to write.
      */
-    public function writeNode(SVGNode $node): void
+    public function write_node(Svg_Node $node): void
     {
-        $this->outString .= '<' . $node->getName();
-
-        $this->appendNamespaces($node->getSerializableNamespaces());
-        $this->appendAttributes($node->getSerializableAttributes());
-        $this->appendStyles($node->getSerializableStyles());
-
-        $textContent = htmlspecialchars($node->getValue());
-
-        if ($node instanceof CDataContainer) {
-            $this->outString .= '>';
-            $this->writeCdata($node->getValue());
-            $this->outString .= '</' . $node->getName() . '>';
+        $this->out_string .= '<' . $node->get_name();
+        $this->append_namespaces($node->get_serializable_namespaces());
+        $this->append_attributes($node->get_serializable_attributes());
+        $this->append_styles($node->get_serializable_styles());
+        $text_content = htmlspecialchars($node->get_value());
+        if ($node instanceof C_Data_Container) {
+            $this->out_string .= '>';
+            $this->write_cdata($node->get_value());
+            $this->out_string .= '</' . $node->get_name() . '>';
             return;
         }
-
-        if ($node instanceof SVGNodeContainer && $node->countChildren() > 0) {
-            $this->outString .= '>';
-            for ($i = 0, $n = $node->countChildren(); $i < $n; ++$i) {
-                $this->writeNode($node->getChild($i));
+        if ($node instanceof Svg_Node_Container && $node->count_children() > 0) {
+            $this->out_string .= '>';
+            for ($i = 0, $n = $node->count_children(); $i < $n; ++$i) {
+                $this->write_node($node->get_child($i));
             }
-            $this->outString .= $textContent . '</' . $node->getName() . '>';
+            $this->out_string .= $text_content . '</' . $node->get_name() . '>';
             return;
         }
-
-        if (Str::trim($textContent) !== '') {
-            $this->outString .= '>' . $textContent . '</' . $node->getName() . '>';
+        if (Str::trim($text_content) !== '') {
+            $this->out_string .= '>' . $text_content . '</' . $node->get_name() . '>';
             return;
         }
-
-        $this->outString .= ' />';
+        $this->out_string .= ' />';
     }
-
     /**
      * Appends all attributes defined in the given associative array to this
      * writer's output.
      *
      * @param string[] $namespaces An associative array of attribute strings.
      */
-    private function appendNamespaces(array $namespaces): void
+    private function append_namespaces(array $namespaces): void
     {
         $normalized = [];
         foreach ($namespaces as $key => $value) {
-            $namespace = self::serializeNamespace($key);
+            $namespace = self::serialize_namespace($key);
             $normalized[$namespace] = $value;
         }
-
-        $this->appendAttributes($normalized);
+        $this->append_attributes($normalized);
     }
-
     /**
      * Converts the given namespace string to standard form, i.e. ensuring that
      * it either equals 'xmlns' or starts with 'xmlns:'.
@@ -106,7 +92,7 @@ class SVGWriter
      *
      * @return string The modified namespace string to be added as attribute.
      */
-    private static function serializeNamespace(string $namespace): string
+    private static function serialize_namespace(string $namespace): string
     {
         if ($namespace === '' || $namespace === 'xmlns') {
             return 'xmlns';
@@ -116,45 +102,40 @@ class SVGWriter
         }
         return $namespace;
     }
-
     /**
      * Converts the given styles into a CSS string, then appends a 'style'
      * attribute with the value set to that string to this writer's output.
      *
      * @param string[] $styles An associative array of styles for the attribute.
      */
-    private function appendStyles(array $styles): void
+    private function append_styles(array $styles): void
     {
         if (empty($styles)) {
             return;
         }
-
         $string = '';
-        $prependSemicolon = false;
+        $prepend_semicolon = false;
         foreach ($styles as $key => $value) {
-            if ($prependSemicolon) {
+            if ($prepend_semicolon) {
                 $string .= '; ';
             }
-            $prependSemicolon = true;
+            $prepend_semicolon = true;
             $string .= $key . ': ' . $value;
         }
-
-        $this->appendAttribute('style', $string);
+        $this->append_attribute('style', $string);
     }
-
     /**
      * Appends all attributes defined in the given associative array to this
      * writer's output.
      *
      * @param string[] $attrs An associative array of attribute strings.
      */
-    private function appendAttributes(array $attrs): void
+    private function append_attributes(array $attrs): void
     {
         foreach ($attrs as $key => $value) {
-            $this->appendAttribute($key, $value);
+            $this->append_attribute($key, $value);
         }
     }
-
     /**
      * Appends a single attribute given by key and value to this writer's
      * output.
@@ -162,23 +143,20 @@ class SVGWriter
      * @param string $attrName  The attribute name.
      * @param string $attrValue The attribute value.
      */
-    private function appendAttribute(string $attrName, string $attrValue): void
+    private function append_attribute(string $attr_name, string $attr_value): void
     {
         $xml1 = defined('ENT_XML1') ? ENT_XML1 : 16;
-
-        $attrName = htmlspecialchars($attrName, $xml1 | ENT_COMPAT);
-        $attrValue = htmlspecialchars($attrValue, $xml1 | ENT_COMPAT);
-
-        $this->outString .= ' ' . $attrName . '="' . $attrValue . '"';
+        $attr_name = htmlspecialchars($attr_name, $xml1 | ENT_COMPAT);
+        $attr_value = htmlspecialchars($attr_value, $xml1 | ENT_COMPAT);
+        $this->out_string .= ' ' . $attr_name . '="' . $attr_value . '"';
     }
-
     /**
      * Appends CDATA content given the $cdata value to the writer's output.
      *
      * @param string $cdata The content.
      */
-    private function writeCdata(string $cdata): void
+    private function write_cdata(string $cdata): void
     {
-        $this->outString .= '<![CDATA[' . $cdata . ']]>';
+        $this->out_string .= '<![CDATA[' . $cdata . ']]>';
     }
 }

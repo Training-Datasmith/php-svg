@@ -1,34 +1,27 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Fonts;
 
 /**
  * Abstract base class for font files.
  */
-abstract class FontFile
+abstract class Font_File
 {
     private string $path;
-
     public function __construct(string $path)
     {
         $this->path = $path;
     }
-
     /**
      * @return string The path of the font file.
      */
-    public function getPath(): string
+    public function get_path(): string
     {
         return $this->path;
     }
-
-    abstract public function getFamily(): string;
-
-    abstract public function getWeight(): float;
-
-    abstract public function isItalic(): bool;
-
-    abstract public function isMonospace(): bool;
+    abstract public function get_family(): string;
+    abstract public function get_weight(): float;
+    abstract public function is_italic(): bool;
+    abstract public function is_monospace(): bool;
 }

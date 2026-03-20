@@ -1,22 +1,19 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Nodes\Shapes;
 
-use SVG\Nodes\SVGNodeContainer;
-use SVG\Rasterization\SVGRasterizer;
-use SVG\Rasterization\Transform\TransformParser;
+use SVG\Nodes\Svg_Node_Container;
+use SVG\Rasterization\Svg_Rasterizer;
+use SVG\Rasterization\Transform\Transform_Parser;
 use SVG\Utilities\Units\Length;
-
 /**
  * Represents the SVG tag 'line'.
  * Has the special attributes x1, y1, x2, y2.
  */
-class SVGLine extends SVGNodeContainer
+class Svg_Line extends Svg_Node_Container
 {
     public const TAG_NAME = 'line';
-
     /**
      * @param mixed $x1 The first point's x coordinate.
      * @param mixed $y1 The first point's y coordinate.
@@ -26,21 +23,18 @@ class SVGLine extends SVGNodeContainer
     public function __construct($x1 = null, $y1 = null, $x2 = null, $y2 = null)
     {
         parent::__construct();
-
-        $this->setAttribute('x1', $x1);
-        $this->setAttribute('y1', $y1);
-        $this->setAttribute('x2', $x2);
-        $this->setAttribute('y2', $y2);
+        $this->set_attribute('x1', $x1);
+        $this->set_attribute('y1', $y1);
+        $this->set_attribute('x2', $x2);
+        $this->set_attribute('y2', $y2);
     }
-
     /**
      * @return string|null The first point's x coordinate.
      */
-    public function getX1(): ?string
+    public function get_x1(): ?string
     {
-        return $this->getAttribute('x1');
+        return $this->get_attribute('x1');
     }
-
     /**
      * Sets the first point's x coordinate.
      *
@@ -48,19 +42,17 @@ class SVGLine extends SVGNodeContainer
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setX1($x1): SVGLine
+    public function set_x1($x1): Svg_Line
     {
-        return $this->setAttribute('x1', $x1);
+        return $this->set_attribute('x1', $x1);
     }
-
     /**
      * @return string|null The first point's y coordinate.
      */
-    public function getY1(): ?string
+    public function get_y1(): ?string
     {
-        return $this->getAttribute('y1');
+        return $this->get_attribute('y1');
     }
-
     /**
      * Sets the first point's y coordinate.
      *
@@ -68,19 +60,17 @@ class SVGLine extends SVGNodeContainer
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setY1($y1): SVGLine
+    public function set_y1($y1): Svg_Line
     {
-        return $this->setAttribute('y1', $y1);
+        return $this->set_attribute('y1', $y1);
     }
-
     /**
      * @return string|null The second point's x coordinate.
      */
-    public function getX2(): ?string
+    public function get_x2(): ?string
     {
-        return $this->getAttribute('x2');
+        return $this->get_attribute('x2');
     }
-
     /**
      * Sets the second point's x coordinate.
      *
@@ -88,19 +78,17 @@ class SVGLine extends SVGNodeContainer
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setX2($x2): SVGLine
+    public function set_x2($x2): Svg_Line
     {
-        return $this->setAttribute('x2', $x2);
+        return $this->set_attribute('x2', $x2);
     }
-
     /**
      * @return string|null The second point's y coordinate.
      */
-    public function getY2(): ?string
+    public function get_y2(): ?string
     {
-        return $this->getAttribute('y2');
+        return $this->get_attribute('y2');
     }
-
     /**
      * Sets the second point's y coordinate.
      *
@@ -108,34 +96,24 @@ class SVGLine extends SVGNodeContainer
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setY2($y2): SVGLine
+    public function set_y2($y2): Svg_Line
     {
-        return $this->setAttribute('y2', $y2);
+        return $this->set_attribute('y2', $y2);
     }
-
     /**
      * @inheritdoc
      */
-    public function rasterize(SVGRasterizer $rasterizer): void
+    public function rasterize(Svg_Rasterizer $rasterizer): void
     {
-        if ($this->getComputedStyle('display') === 'none') {
+        if ($this->get_computed_style('display') === 'none') {
             return;
         }
-
-        $visibility = $this->getComputedStyle('visibility');
+        $visibility = $this->get_computed_style('visibility');
         if ($visibility === 'hidden' || $visibility === 'collapse') {
             return;
         }
-
-        TransformParser::parseTransformString($this->getAttribute('transform'), $rasterizer->pushTransform());
-
-        $rasterizer->render('line', [
-            'x1'    => Length::convert($this->getX1(), $rasterizer->getDocumentWidth()),
-            'y1'    => Length::convert($this->getY1(), $rasterizer->getDocumentHeight()),
-            'x2'    => Length::convert($this->getX2(), $rasterizer->getDocumentWidth()),
-            'y2'    => Length::convert($this->getY2(), $rasterizer->getDocumentHeight()),
-        ], $this);
-
-        $rasterizer->popTransform();
+        Transform_Parser::parse_transform_string($this->get_attribute('transform'), $rasterizer->push_transform());
+        $rasterizer->render('line', ['x1' => Length::convert($this->get_x1(), $rasterizer->get_document_width()), 'y1' => Length::convert($this->get_y1(), $rasterizer->get_document_height()), 'x2' => Length::convert($this->get_x2(), $rasterizer->get_document_width()), 'y2' => Length::convert($this->get_y2(), $rasterizer->get_document_height())], $this);
+        $rasterizer->pop_transform();
     }
 }

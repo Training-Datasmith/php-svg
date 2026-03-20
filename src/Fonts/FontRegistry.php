@@ -1,76 +1,67 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Fonts;
 
-class FontRegistry
+class Font_Registry
 {
-    private array $fontFiles = [];
-
-    public function addFont(string $filePath): void
+    private array $font_files = [];
+    public function add_font(string $file_path): void
     {
-        $ttfFile = TrueTypeFontFile::read($filePath);
-        if ($ttfFile === null) {
-            throw new \RuntimeException('Font file "' . $filePath . '" is not a valid TrueType font.');
+        $ttf_file = True_Type_Font_File::read($file_path);
+        if ($ttf_file === null) {
+            throw new \RuntimeException('Font file "' . $file_path . '" is not a valid TrueType font.');
         }
-        $this->fontFiles[] = $ttfFile;
+        $this->font_files[] = $ttf_file;
     }
-
-    public function findMatchingFont(?string $family, ?string $style, float $weight): ?FontFile
+    public function find_matching_font(?string $family, ?string $style, float $weight): ?Font_File
     {
-        if (empty($this->fontFiles)) {
+        if (empty($this->font_files)) {
             return null;
         }
-
         // TODO implement generic families ('serif', 'sans-serif', 'monospace', etc.)
-
         // Check whether the requested font family is available, or whether we don't have to bother checking the family
         // in the following loops.
-        $anyFontFamily = true;
-        foreach ($this->fontFiles as $font) {
-            if ($family === $font->getFamily()) {
-                $anyFontFamily = false;
+        $any_font_family = true;
+        foreach ($this->font_files as $font) {
+            if ($family === $font->get_family()) {
+                $any_font_family = false;
             }
         }
-
         // Attempt to find the closest-weight match with correct family and cursiveness.
-        $match = $this->closestMatchBasedOnWeight(function (FontFile $font) use ($family, $anyFontFamily, $style): bool {
-            $result = ($anyFontFamily || $font->getFamily() === $family);
-            $isItalic = $font->isItalic();
-            $isOblique = $font->isOblique();
+        $match = $this->closest_match_based_on_weight(function (Font_File $font) use ($family, $any_font_family, $style): bool {
+            $result = $any_font_family || $font->get_family() === $family;
+            $is_italic = $font->is_italic();
+            $is_oblique = $font->is_oblique();
             switch ($style) {
                 case 'italic':
-                    return $result && ($isItalic || $isOblique);
+                    return $result && ($is_italic || $is_oblique);
                 case 'oblique':
-                    return $result && ($isOblique || $isItalic);
+                    return $result && ($is_oblique || $is_italic);
                 default:
-                    return $result && !($isItalic || $isOblique);
+                    return $result && !($is_italic || $is_oblique);
             }
         }, $weight);
-
         // Attempt to match just based on the font family.
-        $match ??= $this->closestMatchBasedOnWeight(fn (FontFile $font) => $anyFontFamily || $font->getFamily() === $family, $weight);
-
+        $match ??= $this->closest_match_based_on_weight(fn(Font_File $font) => $any_font_family || $font->get_family() === $family, $weight);
         // Return any font at all, if possible.
-        return $match ?? $this->fontFiles[0];
+        return $match ?? $this->font_files[0];
     }
-
-    private function closestMatchBasedOnWeight(callable $filter, float $targetWeight): ?FontFile
+    private function closest_match_based_on_weight(callable $filter, float $target_weight): ?Font_File
     {
-        $bestMatch = null;
-        foreach ($this->fontFiles as $font) {
+        $best_match = null;
+        foreach ($this->font_files as $font) {
             if (!$filter($font)) {
                 continue;
             }
-            if ($bestMatch === null) {
-                $bestMatch = $font;
+            if ($best_match === null) {
+                $best_match = $font;
                 continue;
             }
-            if (abs($targetWeight - $font->getWeight()) < abs($targetWeight - $bestMatch->getWeight())) {
-                $bestMatch = $font;
+            if (abs($target_weight - $font->get_weight()) < abs($target_weight - $best_match->get_weight())) {
+                $best_match = $font;
             }
         }
-        return $bestMatch;
+        return $best_match;
     }
 }

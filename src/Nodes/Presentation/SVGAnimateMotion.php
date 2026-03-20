@@ -1,23 +1,20 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Nodes\Presentation;
 
-use SVG\Nodes\SVGNodeContainer;
-use SVG\Rasterization\SVGRasterizer;
-
+use SVG\Nodes\Svg_Node_Container;
+use SVG\Rasterization\Svg_Rasterizer;
 /**
  * Represents the SVG tag 'animateMotion'.
  */
-class SVGAnimateMotion extends SVGNodeContainer
+class Svg_Animate_Motion extends Svg_Node_Container
 {
     public const TAG_NAME = 'animateMotion';
-
     /**
      * @inheritdoc
      */
-    public function rasterize(SVGRasterizer $rasterizer): void
+    public function rasterize(Svg_Rasterizer $rasterizer): void
     {
         // Nothing to rasterize.
     }

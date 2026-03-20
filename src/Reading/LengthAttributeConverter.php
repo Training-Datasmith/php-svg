@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Reading;
 
 /**
@@ -12,17 +11,15 @@ namespace SVG\Reading;
  * unitless CSS properties
  * (e.g. `font-size="11"` is valid, but `style="font-size: 11"` is not).
  */
-class LengthAttributeConverter implements AttributeConverter
+class Length_Attribute_Converter implements Attribute_Converter
 {
     private static $instance;
-
     /**
      * @codeCoverageIgnore
      */
     private function __construct()
     {
     }
-
     /**
      * Obtain the instance of this class.
      *
@@ -30,13 +27,11 @@ class LengthAttributeConverter implements AttributeConverter
      *
      * @codeCoverageIgnore
      */
-    public static function getInstance(): self
+    public static function get_instance(): self
     {
         self::$instance ??= new self();
-
         return self::$instance;
     }
-
     /**
      * @inheritdoc
      */

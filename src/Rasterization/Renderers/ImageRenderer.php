@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace SVG\Rasterization\Renderers;
 
-use SVG\Nodes\SVGNode;
-use SVG\Rasterization\SVGRasterizer;
+use SVG\Nodes\Svg_Node;
+use SVG\Rasterization\Svg_Rasterizer;
 use SVG\SVG;
-
 /**
  * This renderer can draw referenced images (from <image> tags).
  *
@@ -18,48 +16,50 @@ use SVG\SVG;
  * - float width: the width
  * - float height: the height
  */
-class ImageRenderer extends Renderer
+class Image_Renderer extends Renderer
 {
     /**
      * @inheritdoc
      */
-    public function render(SVGRasterizer $rasterizer, array $options, SVGNode $context): void
+    public function render(Svg_Rasterizer $rasterizer, array $options, Svg_Node $context): void
     {
-        $transform = $rasterizer->getCurrentTransform();
-
-        $x      = $options['x'] ?? 0;
-        $y      = $options['y'] ?? 0;
+        $transform = $rasterizer->get_current_transform();
+        $x = $options['x'] ?? 0;
+        $y = $options['y'] ?? 0;
         $transform->map($x, $y);
-
         // TODO support "auto" values for width and height
-
-        $width  = $options['width'] ?? 0;
+        $width = $options['width'] ?? 0;
         $height = $options['height'] ?? 0;
         if ($width <= 0 || $height <= 0) {
             return;
         }
         $transform->resize($width, $height);
-
-        $image = $rasterizer->getImage();
-
-        $img = $this->loadImage($options['href'], $width, $height);
-
-        if (!empty($img) && (is_resource($img) || $img instanceof \GdImage)) {
+        $image = $rasterizer->get_image();
+        $img = $this->load_image($options['href'], $width, $height);
+        if (!empty($img) && (is_resource($img) || $img instanceof \Gd_Image)) {
             imagecopyresampled(
-                $image,         // dst
-                $img,           // src
-                $x,             // dst_x
-                $y,             // dst_y
-                0,              // src_x
-                0,              // src_y
-                $width,         // dst_w
-                $height,        // dst_h
-                imagesx($img),  // src_w
-                imagesy($img)   // src_h
+                $image,
+                // dst
+                $img,
+                // src
+                $x,
+                // dst_x
+                $y,
+                // dst_y
+                0,
+                // src_x
+                0,
+                // src_y
+                $width,
+                // dst_w
+                $height,
+                // dst_h
+                imagesx($img),
+                // src_w
+                imagesy($img)
             );
         }
     }
-
     /**
      * Loads the image locatable via the given HREF and creates a GD resource
      * for it.
@@ -74,18 +74,15 @@ class ImageRenderer extends Renderer
      *
      * @return resource The loaded image.
      */
-    private function loadImage(string $href, int $w, int $h)
+    private function load_image(string $href, int $w, int $h)
     {
-        $content = $this->loadImageContent($href);
-
+        $content = $this->load_image_content($href);
         if (strpos($content, '<svg') !== false && strrpos($content, '</svg>') !== false) {
-            $svg = SVG::fromString($content);
-            return $svg->toRasterImage($w, $h);
+            $svg = SVG::from_string($content);
+            return $svg->to_raster_image($w, $h);
         }
-
         return imagecreatefromstring($content);
     }
-
     /**
      * Loads the data of an image locatable via the given HREF into a string.
      *
@@ -93,29 +90,24 @@ class ImageRenderer extends Renderer
      *
      * @return string The image content.
      */
-    private function loadImageContent(string $href): string
+    private function load_image_content(string $href): string
     {
-        $dataPrefix = 'data:';
-
+        $data_prefix = 'data:';
         // check if $href is data URI
-        if (substr($href, 0, strlen($dataPrefix)) === $dataPrefix) {
-            $commaPos = strpos($href, ',');
-            $metadata = substr($href, 0, $commaPos);
-            $content  = substr($href, $commaPos + 1);
-
+        if (substr($href, 0, strlen($data_prefix)) === $data_prefix) {
+            $comma_pos = strpos($href, ',');
+            $metadata = substr($href, 0, $comma_pos);
+            $content = substr($href, $comma_pos + 1);
             if (strpos($metadata, ';base64') !== false) {
                 return base64_decode($content);
             }
-
             return $content;
         }
-
         // Only allow http and https schemes to prevent SSRF via file://, phar://, php://, etc.
         $scheme = strtolower((string) parse_url($href, PHP_URL_SCHEME));
         if ($scheme !== 'http' && $scheme !== 'https') {
             return '';
         }
-
         return file_get_contents($href);
     }
 }
